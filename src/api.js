@@ -19,7 +19,9 @@ api.getAdUser=()=>{
                     resolve(response.data.map(item=>{
                         return {
                             ...item,
-                            title: item.title && item.title.toUpperCase()
+                            title: item.title && item.title.toUpperCase(),
+                            url: item.url && item.url.join(', ').toUpperCase(),
+
                         }
                     }))
                 }

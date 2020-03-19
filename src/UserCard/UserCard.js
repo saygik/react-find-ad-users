@@ -85,6 +85,15 @@ const UserDepartmentBox=({text,searchValue, classes})=>{
         </Box>
     </>
 }
+const UserUrlBox=({text,searchValue, classes})=>{
+    return <>
+        <Box letterSpacing={3} className={classes.userurl}>
+            {text ? <SelectedText searchValue={searchValue} text={text} classes={classes} />
+                : ''}
+        </Box>
+    </>
+}
+
 
 const UserCard = ({user,index, searchValue}) => {
     const classes = useStyles();
@@ -122,8 +131,7 @@ const UserCard = ({user,index, searchValue}) => {
                                 <UserTitleBox text={user.title} searchValue={searchValue} classes={classes}/>
                                 <UserCompanyBox text={user.company} searchValue={searchValue} classes={classes}/>
                                 <UserDepartmentBox text={user.department} searchValue={searchValue} classes={classes}/>
-                                {/*<UserDepartmentBox text={user.dn} searchValue={searchValue} classes={classes}/>*/}
-
+                                <UserUrlBox text={user.url} searchValue={searchValue} classes={classes}/>
                             </Grid>
                         </Grid>
 
@@ -170,9 +178,15 @@ const useStyles = makeStyles(theme => ({
     userdepartment:{
         color:'#72ac72',
         fontSize:'.9rem',
-        fontWeight: 400,
+        fontWeight: 600,
         textAlign:'left',
 
+    },
+    userurl:{
+        color:'#8ea78e',
+        fontSize:'.7rem',
+        fontWeight: 400,
+        textAlign:'left',
     },
     searchResult:{
         textAlign:'left',

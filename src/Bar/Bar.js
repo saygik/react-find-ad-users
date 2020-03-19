@@ -37,7 +37,7 @@ const Bar = (props) => {
                                 Поиск работников Барановичского отделения
                             </Typography>
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item xs={7}>
                             <div className={classes.search}>
                                 <div className={classes.searchIcon}>
                                     <SearchIcon />
@@ -55,7 +55,7 @@ const Bar = (props) => {
                         </div>
                             <div className={classes.grow} />
                         </Grid>
-                        <Grid item xs={1} className={classes.box} >
+                        <Grid item xs={2} className={classes.box} >
                             <IconButton
                             className={classes.expand}
                             onClick={handleExpandClick}

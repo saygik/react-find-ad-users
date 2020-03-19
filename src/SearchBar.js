@@ -9,6 +9,7 @@ import api from './api'
 import UserCard from './UserCard'
 import Bar from './Bar'
 import LinearProgress from '@material-ui/core/LinearProgress';
+import NotFound from './NotFound'
 
 let page=0
 const useStyles = makeStyles(theme => ({
@@ -69,6 +70,7 @@ const SearchBar=()=>{
                 || (user.title && _.includes(user.title.toUpperCase(), searchValue.toUpperCase()))
                 || (user.company && _.includes(user.company.toUpperCase(), searchValue.toUpperCase()))
                 || (user.department && _.includes(user.department.toUpperCase(), searchValue.toUpperCase()))
+                || (user.url && _.includes(user.url.toUpperCase(), searchValue.toUpperCase()))
                 || (user.telephoneNumber && _.includes(user.telephoneNumber.toUpperCase(), searchValue.toUpperCase()))
                 )})
 
@@ -111,7 +113,6 @@ const SearchUsersWithTimeout=()=>{
         })
 
     },[])
-
     return (
         <div className={classes.root}>
             <Bar searchValue={searchValue}
@@ -125,16 +126,19 @@ const SearchUsersWithTimeout=()=>{
             <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 180 : 68, height: 5,}}/>
             <Grid container justify="center">
                 <Grid  item  xs={8} >
-                {/*{adShowedUsers.map( (user,index)=> <UserCard key={user.objectGUID} user={user} index={index} searchValue={searchValue}/> )}*/}
-                <InfiniteScroll
-                    pageStart={page}
-                    loadMore={getNewUsers}
-                    hasMore={adFiltredUsers.length > adShowedUsers.length}
-                    threshold={10}
-                    useWindow={true}
-                >
-                    {adShowedUsers.map( (user,index)=> <UserCard key={user.objectGUID} user={user} index={index} searchValue={searchValues}/> )}
-                </InfiniteScroll>
+                    {adFiltredUsers.length === 0
+                        ? <NotFound/>
+                        :   <InfiniteScroll
+                                pageStart={page}
+                                loadMore={getNewUsers}
+                                hasMore={adFiltredUsers.length > adShowedUsers.length}
+                                threshold={10}
+                                useWindow={true}
+                            >
+                                {adShowedUsers.map((user, index) => <UserCard key={user.objectGUID} user={user}
+                                                                              index={index} searchValue={searchValues}/>)}
+                        </InfiniteScroll>
+                    }
                 </Grid>
             </Grid>
 
