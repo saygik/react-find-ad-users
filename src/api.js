@@ -20,7 +20,7 @@ api.getAdUser=()=>{
                         return {
                             ...item,
                             title: item.title && item.title.toUpperCase(),
-                            url: item.url && item.url.join(', ').toUpperCase(),
+                            url: item.url && Array.isArray(item.url) ? item.url.join(', ').toUpperCase(): item.url,
 
                         }
                     }))
