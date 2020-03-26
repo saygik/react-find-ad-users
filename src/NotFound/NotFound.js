@@ -23,15 +23,17 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const  NotFoundContent= () => {
+const  NotFoundContent= ({loading, filtred}) => {
     const  classes  = useStyles();
     return (
         <div className={classes.center}>
-            <FindIcon className={classes.emptyStateIcon} color="action" />
-            <Typography color="textSecondary" variant="h4">данные не найдены</Typography>
-            <Typography color="textSecondary" variant="subtitle1">попробуйте изменить параметры поиска</Typography>
-            <br/>
-            <br/>
+            {!loading && <>
+                        <FindIcon className={classes.emptyStateIcon} style={{color:filtred ? '#ccc' :'#3f51b5'}} />
+                        <Typography style={{color:filtred ? '#ccc' :'#3f51b5'}} variant="h4">{filtred ? 'Данные не найдены' :'Начните поиск'}</Typography>
+                        <Typography color="textSecondary" variant="subtitle1">{filtred ? 'попробуйте изменить параметры поиска' :'определите параметры поиска'}</Typography>
+                        <br/>
+                        <br/>
+                </>}
         </div>
     );
 }

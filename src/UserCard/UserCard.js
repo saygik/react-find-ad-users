@@ -93,7 +93,14 @@ const UserUrlBox=({text,searchValue, classes})=>{
         </Box>
     </>
 }
-
+const UserMailBox=({text,searchValue, classes})=>{
+    return <>
+        <Box className={classes.usermail}>
+            {text ? <SelectedText searchValue={searchValue} text={text} classes={classes} />
+                : ''}
+        </Box>
+    </>
+}
 
 const UserCard = ({user,index, searchValue}) => {
     const classes = useStyles();
@@ -120,7 +127,11 @@ const UserCard = ({user,index, searchValue}) => {
                                         <SkypeIcon sip={user.sip}/>
                                     </Grid>
                                 </Grid>
-
+                                <Grid container justify='center' alignItems="flex-end" style={{height:'100%',paddingBottom:'20px'}}>
+                                    <Grid item  >
+                                        <UserMailBox text={user.mail} searchValue={searchValue} classes={classes}/>
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -187,6 +198,13 @@ const useStyles = makeStyles(theme => ({
         fontSize:'.7rem',
         fontWeight: 400,
         textAlign:'left',
+    },
+    usermail:{
+        color:'#4f774f',
+        fontSize:'.9rem',
+        fontWeight: 400,
+        textAlign:'left',
+
     },
     searchResult:{
         textAlign:'left',

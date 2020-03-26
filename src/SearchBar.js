@@ -10,6 +10,7 @@ import UserCard from './UserCard'
 import Bar from './Bar'
 import LinearProgress from '@material-ui/core/LinearProgress';
 import NotFound from './NotFound'
+import {withMobileDialog} from "@material-ui/core"
 
 let page=0
 const useStyles = makeStyles(theme => ({
@@ -62,16 +63,17 @@ const SearchBar=()=>{
     const handleSearch=(e)=>setSearchValue(e.target.value)
 
     const searchUsers=()=>{
-        setLoading(true)
         let filtredUsers={...adUsers}
         _.forEach(searchValues, searchValue =>{
-            filtredUsers=_.filter(filtredUsers, user =>
-                _.includes(user.cn.toUpperCase(), searchValue.toUpperCase())
+            filtredUsers=_.filter(filtredUsers, user =>{
+                return _.includes(user.cn.toUpperCase(), searchValue.toUpperCase())
                 || (user.title && _.includes(user.title.toUpperCase(), searchValue.toUpperCase()))
                 || (user.company && _.includes(user.company.toUpperCase(), searchValue.toUpperCase()))
                 || (user.department && _.includes(user.department.toUpperCase(), searchValue.toUpperCase()))
                 || (user.url && _.includes(user.url.toUpperCase(), searchValue.toUpperCase()))
+                || (user.mail && _.includes(user.mail.toLowerCase(), searchValue.toLowerCase()))
                 || (user.telephoneNumber && _.includes(user.telephoneNumber.toUpperCase(), searchValue.toUpperCase()))
+                }
                 )})
 
         const sortedUsers = _.sortBy(filtredUsers, sortFields)
@@ -98,8 +100,10 @@ const SearchUsersWithTimeout=()=>{
 
     useEffect(()=>{
         if (searchValues[0].length>2) {
+            setLoading(true)
             SearchUsersWithTimeout()
         } else {
+            setLoading(false)
             setAdFiltredUsers([])
         }
     },[searchValues, sortFields])
@@ -123,11 +127,11 @@ const SearchUsersWithTimeout=()=>{
                  expanded={expanded}
                  setExpanded={setExpanded}
             />
-            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 180 : 68, height: 5,}}/>
+            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 180 : 68, height: 3,}}/>
             <Grid container justify="center">
                 <Grid  item  xs={8} >
                     {adFiltredUsers.length === 0
-                        ? <NotFound/>
+                        ? <NotFound loading={loading} filtred={searchValues[0].length>2}/>
                         :   <InfiniteScroll
                                 pageStart={page}
                                 loadMore={getNewUsers}
