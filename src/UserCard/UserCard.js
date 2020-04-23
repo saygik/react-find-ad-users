@@ -7,10 +7,11 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import MailIcon from './Icons/MailIcon';
 import SkypeIcon from './Icons/SkypeIcon'
-import Highlighter from "react-highlight-words"
 import {makeStyles} from "@material-ui/core/styles"
-
-
+import Button from "@material-ui/core/Button"
+import Link from '@material-ui/core/Link';
+import TextHighlighter from '../TextHighlighter'
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 
 const Phone=({phone,icon})=>{
     return <Grid item xs={12} >
@@ -43,71 +44,17 @@ const OtherTelephones=({otherTelephones})=>{
 }
 
 
-const SelectedText=({text,searchValue, classes})=>{
-    const searchWords=searchValue
-    //searchValue && searchWords.push(searchValue)
-    return <Highlighter
-        highlightClassName={classes.colorize}
-        caseSensitive={false}
-        searchWords={searchWords}
-        autoEscape={true}
-        textToHighlight={text}
-    />
-}
-const UserNameBox=({text,searchValue, classes})=>{
-    return <>
-        <Box letterSpacing={3} className={classes.fio}>
-            <SelectedText searchValue={searchValue} text={text} classes={classes}/>
-        </Box>
-    </>
-}
-const UserTitleBox=({text,searchValue, classes})=>{
-    return <>
-        <Box letterSpacing={3} className={classes.usertitle}>
-            {text ? <SelectedText searchValue={searchValue} text={text} classes={classes} />
-                : 'должность не определена'}
-        </Box>
-    </>
-}
-const UserCompanyBox=({text,searchValue, classes})=>{
-    return <>
-        <Box letterSpacing={3} className={classes.usercompany}>
-            {text ? <SelectedText searchValue={searchValue} text={text} classes={classes} />
-                : 'предприятие не определено'}
-        </Box>
-    </>
-}
-const UserDepartmentBox=({text,searchValue, classes})=>{
-    return <>
-        <Box letterSpacing={3} className={classes.userdepartment}>
-            {text ? <SelectedText searchValue={searchValue} text={text} classes={classes} />
-                : 'предприятие не определено'}
-        </Box>
-    </>
-}
-const UserUrlBox=({text,searchValue, classes})=>{
-    return <>
-        <Box letterSpacing={3} className={classes.userurl}>
-            {text ? <SelectedText searchValue={searchValue} text={text} classes={classes} />
-                : ''}
-        </Box>
-    </>
-}
-const UserMailBox=({text,searchValue, classes})=>{
-    return <>
-        <Box className={classes.usermail}>
-            {text ? <SelectedText searchValue={searchValue} text={text} classes={classes} />
-                : ''}
-        </Box>
-    </>
-}
-
-const UserCard = ({user,index, searchValue}) => {
+const UserCard = ({user,index, searchValue, selectUser, selectable}) => {
     const classes = useStyles();
+    const handleSelectUser = event => {
+        event.preventDefault();
+        selectUser(user)
+    }
     return <>
             <Paper className={classes.paper}>
+
                 <Box component={'div'} className={classes.paperBack} >
-                    {index+1}
+                        {index+1}
                 <Grid container justify='flex-start'>
                     <Grid item xs={4} >
                         <Grid container justify='flex-start'>
@@ -129,7 +76,11 @@ const UserCard = ({user,index, searchValue}) => {
                                 </Grid>
                                 <Grid container justify='center' alignItems="flex-end" style={{height:'100%',paddingBottom:'20px'}}>
                                     <Grid item  >
-                                        <UserMailBox text={user.mail} searchValue={searchValue} classes={classes}/>
+                                        <Box className={classes.usermail}>
+                                            {user.mail
+                                                ? <TextHighlighter searchValue={searchValue} text={user.mail}  />
+                                                : ''}
+                                        </Box>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -138,17 +89,37 @@ const UserCard = ({user,index, searchValue}) => {
                     <Grid item xs={8} >
                         <Grid container  justify='flex-start'>
                             <Grid item>
-                                <UserNameBox text={user.cn} searchValue={searchValue} classes={classes}/>
-                                <UserTitleBox text={user.title} searchValue={searchValue} classes={classes}/>
-                                <UserCompanyBox text={user.company} searchValue={searchValue} classes={classes}/>
-                                <UserDepartmentBox text={user.department} searchValue={searchValue} classes={classes}/>
-                                <UserUrlBox text={user.url} searchValue={searchValue} classes={classes}/>
+                                {/*<UserNameBox text={user.cn} searchValue={searchValue} selectUser={selectUser} classes={classes}/>*/}
+                                <Box letterSpacing={3} className={classes.fio}>
+                                    <Link href="#" onClick={handleSelectUser} color="inherit">
+                                        <TextHighlighter searchValue={searchValue} text={user.cn} />
+                                    </Link>
+                                </Box>
+                                <Box letterSpacing={3} className={classes.usertitle}>
+                                    {user.title ? <TextHighlighter searchValue={searchValue} text={user.title}/>
+                                        : 'должность не определена'}
+                                </Box>
+                                <Box letterSpacing={3} className={classes.usercompany}>
+                                    {user.company ? <TextHighlighter searchValue={searchValue} text={user.company}  />
+                                        : 'предприятие не определено'}
+                                </Box>
+                                <Box letterSpacing={3} className={classes.userdepartment}>
+                                    {user.department ? <TextHighlighter searchValue={searchValue} text={user.department}  />
+                                        : 'предприятие не определено'}
+                                </Box>
+                                <Box letterSpacing={3} className={classes.userurl}>
+                                    {user.url ? <TextHighlighter searchValue={searchValue} text={user.url} />
+                                        : ''}
+                                </Box>
                             </Grid>
                         </Grid>
 
                     </Grid>
 
                 </Grid>
+                    <Link href="#" onClick={handleSelectUser} color="inherit">
+                        <SettingsEthernetIcon style={{color:'#999', fontSize: 32 }}/>
+                    </Link>
                 </Box>
             </Paper>
     </>
@@ -210,16 +181,19 @@ const useStyles = makeStyles(theme => ({
         textAlign:'left',
         color:'#81817f',
     },
-    colorize:{
-        backgroundColor:'#fafdca',
-        color:'red'
-    },
     paperBack: {
         top: theme.spacing(1),
         color:'#4a4a4a',
         padding:0,
         textAlign:'right',
+        verticalAlign:'top',
         width: '100%',
+    },
+    nn: {
+        position: 'absolute',
+        right: theme.spacing(10),
+        top: theme.spacing(10),
+        color: theme.palette.grey[500],
     },
 }));
 

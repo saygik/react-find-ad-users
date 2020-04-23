@@ -1,8 +1,6 @@
 import React, {useEffect, useState, useMemo} from 'react'
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import InfiniteScroll from 'react-infinite-scroller';
 import _ from 'lodash'
 import api from './api'
@@ -10,7 +8,8 @@ import UserCard from './UserCard'
 import Bar from './Bar'
 import LinearProgress from '@material-ui/core/LinearProgress';
 import NotFound from './NotFound'
-import {withMobileDialog} from "@material-ui/core"
+
+import UserPropsDialog from './UserProps'
 
 let page=0
 const useStyles = makeStyles(theme => ({
@@ -117,6 +116,12 @@ const SearchUsersWithTimeout=()=>{
         })
 
     },[])
+
+    const [selectedUser, setSelectedUser] = React.useState({});
+    const handleDialogClose = () => {
+        setSelectedUser({});
+    };
+
     return (
         <div className={classes.root}>
             <Bar searchValue={searchValue}
@@ -139,16 +144,42 @@ const SearchUsersWithTimeout=()=>{
                                 threshold={10}
                                 useWindow={true}
                             >
-                                {adShowedUsers.map((user, index) => <UserCard key={user.objectGUID} user={user}
-                                                                              index={index} searchValue={searchValues}/>)}
+                                {adShowedUsers.map((user, index) => <UserCard key={user.objectGUID}
+                                                                              user={user}
+                                                                              selectUser={setSelectedUser}
+                                                                              index={index}
+                                                                              searchValue={searchValues}
+                                                                    />)}
                         </InfiniteScroll>
                     }
                 </Grid>
             </Grid>
 
+            <UserPropsDialog selectedValue={selectedUser} onClose={handleDialogClose} />
         </div>
     );
 }
+
+// function SimpleDialog(props) {
+//     const { onClose, selectedValue } = props;
+//
+//     const handleClose = () => {
+//         onClose();
+//     };
+//
+//     return (
+//         <Dialog onClose={handleClose}
+//                 fullWidth={true}
+//                 maxWidth={'md'}
+//                 aria-labelledby="simple-dialog-title"
+//                 open={!_.isEmpty(selectedValue)}>
+//             <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
+//             {selectedValue.cn}
+//         </Dialog>
+//     );
+// }
+
+
 
 export default SearchBar
 
