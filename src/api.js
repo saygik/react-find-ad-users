@@ -2,8 +2,8 @@ import axios from 'axios'
 import {avatarColors} from './serices'
 axios.defaults.timeout = 10000
 
-const _apiBase = 'http://vm-say-work.brnv.rw:9003'
-//const _apiBase = 'http://ad-users.brnv.rw'
+//const _apiBase = 'http://vm-say-work.brnv.rw:9003'
+const _apiBase = 'http://ad-users.brnv.rw'
 const api = {};
 api.getAdUser=()=>{
     return new Promise((resolve, reject) => {
