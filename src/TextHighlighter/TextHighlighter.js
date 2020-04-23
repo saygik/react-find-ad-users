@@ -9,9 +9,8 @@ const useStyles = makeStyles(theme => ({
     },
 
 }));
-const TextHighlighter = ({text,searchValue, highlight}) => {
+const TextHighlighter = ({text,searchValue}) => {
     const classes = useStyles();
-    if (!highlight) return <>{text}</>
     const searchWords=searchValue
     //searchValue && searchWords.push(searchValue)
     return <Highlighter
