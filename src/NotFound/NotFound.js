@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
 
 const  NotFoundContent= ({loading, filtred}) => {
     const  classes  = useStyles();
+
     return (
         <div className={classes.center}>
             {!loading && <>

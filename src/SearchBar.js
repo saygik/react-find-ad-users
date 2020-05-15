@@ -1,23 +1,26 @@
 import React, {useEffect, useState, useMemo} from 'react'
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import InfiniteScroll from 'react-infinite-scroller';
 import _ from 'lodash'
 import api from './api'
-import UserCard from './UserCard'
+import UserCards from './UserCard'
+import SoftCards from './SoftCards'
 import Bar from './Bar'
 import LinearProgress from '@material-ui/core/LinearProgress';
 import NotFound from './NotFound'
 
 import UserPropsDialog from './UserProps'
 
-let page=0
+
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
     },
     searchResult: {
         marginRight: theme.spacing(2),
+    },
+    cardsGrid: {
+        marginTop: theme.spacing(4),
     },
 
 }));
@@ -33,13 +36,17 @@ const FilterProgress = withStyles({
 
 const SearchBar=()=>{
     const classes = useStyles();
-    const [loading,setLoading]=useState(false)           //Значение в поле поиска
-    const [searchValue,setSearchValue]=useState('')           //Значение в поле поиска
-    const [adUsers,setAdUsers]=useState([])                   //Все пользователи домена brnv.rw
-    const [adFiltredUsers,setAdFiltredUsers]=useState([])     //Отфильтрованные пользователи
-    const [adShowedUsers,setAdShowedUsers]=useState([])       //Показанные на экране пользователи
+    const [searching,setSearching]=useState(false)              //Поиск
+    const [serachType, setSerachType] = React.useState('peoples'); //Тип поиска (люди-программы)
+    const [loading,setLoading]=useState(false)                  //Загрузка
+    const [searchValue,setSearchValue]=useState('')             //Значение в поле поиска
+    const [adUsers,setAdUsers]=useState([])                     //Все пользователи домена brnv.rw
+    const [software,setSoftware]=useState([])                   //Все программы на обслуживании ИВЦ
+    const [adFiltredUsers,setAdFiltredUsers]=useState([])       //Отфильтрованные пользователи
+    const [filtredSoft,setFiltredSoft]=useState([])             //Отфильтрованный софт
+
     const [expanded, setExpanded] = React.useState(false);
-    const [sortState, setSortState] = React.useState({        //Настройки сортировки
+    const [sortState, setSortState] = React.useState({          //Настройки сортировки
         company: true,
         department: true,
         cn: true,
@@ -51,107 +58,126 @@ const SearchBar=()=>{
         return searchValue.split(' ')
     },[searchValue])
 
-    const getNewUsers=()=>{
-        page++;
-        const pageStart=page*10-10
-        const pageEnd=pageStart+10>adFiltredUsers.length ? adFiltredUsers.length : pageStart+10
-        const pageUsers = adFiltredUsers.slice(pageStart, pageEnd);
-        setAdShowedUsers(adShowedUsers.concat(pageUsers));
 
-    }
+    const isUsers=useMemo(()=>serachType==='peoples',[serachType])
+
+    const countRecords=useMemo(()=>{
+        return isUsers ? adFiltredUsers.length:filtredSoft.length
+    },[adFiltredUsers,filtredSoft])
+
     const handleSearch=(e)=>setSearchValue(e.target.value)
 
-    const searchUsers=()=>{
-        let filtredUsers={...adUsers}
-        _.forEach(searchValues, searchValue =>{
-            filtredUsers=_.filter(filtredUsers, user =>{
-                return _.includes(user.cn.toUpperCase(), searchValue.toUpperCase())
-                || (user.title && _.includes(user.title.toUpperCase(), searchValue.toUpperCase()))
-                || (user.company && _.includes(user.company.toUpperCase(), searchValue.toUpperCase()))
-                || (user.department && _.includes(user.department.toUpperCase(), searchValue.toUpperCase()))
-                || (user.url && _.includes(user.url.toUpperCase(), searchValue.toUpperCase()))
-                || (user.mail && _.includes(user.mail.toLowerCase(), searchValue.toLowerCase()))
-                || (user.telephoneNumber && _.includes(user.telephoneNumber.toUpperCase(), searchValue.toUpperCase()))
-                }
-                )})
+    const search=()=>{
 
+        let filtredUsers={...adUsers}
+        let filtredSoft={...software}
+        if (searchValues[0]!=='*') {
+            _.forEach(searchValues, searchValue => {
+                filtredUsers = _.filter(filtredUsers, user => {
+                        return _.includes(user.cn.toUpperCase(), searchValue.toUpperCase())
+                            || (user.title && _.includes(user.title.toUpperCase(), searchValue.toUpperCase()))
+                            || (user.company && _.includes(user.company.toUpperCase(), searchValue.toUpperCase()))
+                            || (user.department && _.includes(user.department.toUpperCase(), searchValue.toUpperCase()))
+                            || (user.url && _.includes(user.url.toUpperCase(), searchValue.toUpperCase()))
+                            || (user.mail && _.includes(user.mail.toLowerCase(), searchValue.toLowerCase()))
+                            || (user.telephoneNumber && _.includes(user.telephoneNumber.toUpperCase(), searchValue.toUpperCase()))
+                    }
+                )
+            })
+            filtredSoft = _.filter(filtredSoft, soft => _.includes(soft.title.toUpperCase(), searchValue.toUpperCase()))
+        }
         const sortedUsers = _.sortBy(filtredUsers, sortFields)
+        setFiltredSoft(_.sortBy(filtredSoft, 'title'))
         setAdFiltredUsers(sortedUsers)
+        setSearching(false)
     }
 
-const SearchUsersWithTimeout=()=>{
+const SearchWithTimeout=()=>{
 
     if(timeout) clearTimeout(timeout);
     const newTimeout = setTimeout(() => {
-        searchUsers()
+        search()
     }, 300);
     setNewTimeout(newTimeout)
 }
 
-
-
-//крап
     useEffect(()=>{
-        page=0
-        setAdShowedUsers([])
-        setLoading(false)
-    },[adFiltredUsers])
-
-    useEffect(()=>{
-        if (searchValues[0].length>2) {
-            setLoading(true)
-            SearchUsersWithTimeout()
+        if (searchValues[0].length>1 || searchValues[0]==='*') {
+            setSearching(true)
+            SearchWithTimeout()
         } else {
-            setLoading(false)
+            setSearching(false)
             setAdFiltredUsers([])
+            setFiltredSoft([])
         }
     },[searchValues, sortFields])
 
-    useEffect(()=>{
-        setLoading(true)
-        api.getAdUser().then(res=>{
+    useEffect( ()=>{
+        async function fetchUsers() {
+            const res= await api.getAdUser()
             setAdUsers(res)
+            const soft= await api.getSoftware()
+            setSoftware(soft)
             setLoading(false)
-//            setSearchValue('крап')
-        })
+        }
+        setLoading(true)
+        fetchUsers()
+        const interval = setInterval(() => {
+            setLoading(true)
+            fetchUsers()
+        }, 60000);
 
+        return () => clearInterval(interval);
     },[])
 
     const [selectedUser, setSelectedUser] = React.useState({});
     const handleDialogClose = () => {
         setSelectedUser({});
     };
+    const findAndSelectUser = (user) => {
+        if (!user) return setSelectedUser({});
+        const findedUser=adUsers.find(adUser=> adUser.cn===user.name || adUser.mail===user.mail)
+        if (findedUser) {
+            setSelectedUser(findedUser);
+        } else {
+            setSelectedUser({});
+        }
+    };
 
     return (
         <div className={classes.root}>
             <Bar searchValue={searchValue}
                  handleSearch={handleSearch}
-                 count={adFiltredUsers.length}
+                 count={isUsers ? adFiltredUsers.length: filtredSoft.length}
+                 countUsers={adUsers.length}
+                 countSoft={software.length}
                  sortState={sortState}
                  setSortState={setSortState}
                  expanded={expanded}
                  setExpanded={setExpanded}
+                 loading={loading}
+                 serachType={serachType}
+                 setSerachType={setSerachType}
             />
             <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 180 : 68, height: 3,}}/>
-            <Grid container justify="center">
+            <Grid container justify="center" className={classes.cardsGrid}>
                 <Grid  item  xs={8} >
-                    {adFiltredUsers.length === 0
-                        ? <NotFound loading={loading} filtred={searchValues[0].length>2}/>
-                        :   <InfiniteScroll
-                                pageStart={page}
-                                loadMore={getNewUsers}
-                                hasMore={adFiltredUsers.length > adShowedUsers.length}
-                                threshold={10}
-                                useWindow={true}
-                            >
-                                {adShowedUsers.map((user, index) => <UserCard key={user.objectGUID}
-                                                                              user={user}
-                                                                              selectUser={setSelectedUser}
-                                                                              index={index}
-                                                                              searchValue={searchValues}
-                                                                    />)}
-                        </InfiniteScroll>
-                    }
+                            {countRecords === 0
+                                ? <NotFound loading={searching} filtred={searchValues[0].length > 1}/>
+                                : isUsers
+                                    ? <UserCards
+                                        adFiltredUsers={adFiltredUsers}
+                                        setSearching={setSearching}
+                                        setSelectedUser={setSelectedUser}
+                                        searchValues={searchValues}
+                                      />
+                                    : <SoftCards
+                                        software={filtredSoft}
+                                        searchValues={searchValues}
+                                        setSearching={setSearching}
+                                        findAndSelectUser={findAndSelectUser}
+                                      />
+                            }
                 </Grid>
             </Grid>
 
@@ -160,28 +186,4 @@ const SearchUsersWithTimeout=()=>{
     );
 }
 
-// function SimpleDialog(props) {
-//     const { onClose, selectedValue } = props;
-//
-//     const handleClose = () => {
-//         onClose();
-//     };
-//
-//     return (
-//         <Dialog onClose={handleClose}
-//                 fullWidth={true}
-//                 maxWidth={'md'}
-//                 aria-labelledby="simple-dialog-title"
-//                 open={!_.isEmpty(selectedValue)}>
-//             <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
-//             {selectedValue.cn}
-//         </Dialog>
-//     );
-// }
-
-
-
 export default SearchBar
-
-
-

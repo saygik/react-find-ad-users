@@ -12,11 +12,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
-import SortPanel from "./Panels/SortPanel"
 import Paper from "@material-ui/core/Paper"
+import {SortPanel, SwitchPanel} from "./Panels"
+import {blueGrey} from "@material-ui/core/colors"
 
 const Bar = (props) => {
-    const {searchValue, handleSearch, count,sortState, setSortState, expanded, setExpanded}=props
+    const {searchValue, handleSearch, count,sortState, setSortState,
+           expanded, setExpanded, loading, serachType, setSerachType, countUsers, countSoft}=props
     const classes = useStyles();
 
     const handleExpandClick = () => {
@@ -32,28 +34,46 @@ const Bar = (props) => {
                       justify="flex-start"
                       alignItems="flex-start"
                       style={{width:'100%',marginTop:'20px',}}>
-                        <Grid item xs={3} className={classes.box}>
+                        <Grid item xs={2} className={classes.box}>
                             <Typography className={classes.title} variant="h6" noWrap>
-                                Поиск работников Барановичского отделения
+                                Барановичское отделение
                             </Typography>
+                            <Box className={classes.count} >всего {countUsers} человек</Box>
+                            <Box className={classes.count} >всего {countSoft} программ и сервисов</Box>
                         </Grid>
-                        <Grid item xs={7}>
-                            <div className={classes.search}>
-                                <div className={classes.searchIcon}>
-                                    <SearchIcon />
-                                </div>
-                            <InputBase
-                                placeholder="Поиск по имени, предприятию, должности…"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
-                                inputProps={{ 'aria-label': 'search' }}
-                                value={searchValue}
-                                onChange={handleSearch}
-                            />
-                        </div>
-                            <div className={classes.grow} />
+                        <Grid item xs={8}>
+                            <Grid container
+                                  spacing={0}
+                                  direction="row"
+                                  justify="flex-start"
+                                  alignItems="flex-start"
+                                  style={{width:'100%',marginTop:'0px',}}>
+                                <Grid  item xs={3}>
+                                    <SwitchPanel serachType={serachType} setSerachType={setSerachType}
+                                    />
+                                </Grid>
+                                <Grid  item xs={9}>
+                                    <div className={classes.search}>
+                                        <div className={classes.searchIcon}>
+                                            <SearchIcon />
+                                        </div>
+                                        <InputBase
+                                            placeholder={serachType==='peoples'
+                                                                    ? "Поиск по имени, предприятию, должности..."
+                                                                    : "Поиск по наименованию программы или сервиса..."}
+                                            classes={{
+                                                root: classes.inputRoot,
+                                                input: classes.inputInput,
+                                            }}
+                                            inputProps={{ 'aria-label': 'search', readOnly: loading,}}
+                                            value={searchValue}
+                                            onChange={handleSearch}
+                                        />
+
+                                    </div>
+                                    <div className={classes.grow} />
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item xs={2} className={classes.box} >
                             <IconButton
@@ -181,6 +201,10 @@ const useStyles = makeStyles(theme => ({
         paddingBottom: '1px',
         marginTop: '-15px',
         width: '100%',
+    },
+    count: {
+        color: blueGrey[200],
+        fontSize:'.9rem',
     },
 }));
 

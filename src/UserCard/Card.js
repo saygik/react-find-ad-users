@@ -108,7 +108,7 @@ const useStyles = makeStyles(theme => ({
          event.preventDefault();
          selectUser(user)
      }
-//     console.log('--time---', presenceTimeFormat(user.availability))
+     if (!user) return ''
     return (
         <Card className={classes.root}>
             <Box component={'div'} className={classes.number}>
