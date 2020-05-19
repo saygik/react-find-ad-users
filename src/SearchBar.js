@@ -143,7 +143,7 @@ const SearchWithTimeout=()=>{
             setSelectedUser({});
         }
     };
-
+    console.log('-loading-',loading)
     return (
         <div className={classes.root}>
             <Bar searchValue={searchValue}
@@ -159,7 +159,7 @@ const SearchWithTimeout=()=>{
                  serachType={serachType}
                  setSerachType={setSerachType}
             />
-            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 180 : 68, height: 3,}}/>
+            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 220 : 107, height: 3,}}/>
             <Grid container justify="center" className={classes.cardsGrid}>
                 <Grid  item  xs={8} >
                             {countRecords === 0

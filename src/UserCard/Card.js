@@ -165,6 +165,19 @@ const useStyles = makeStyles(theme => ({
                     </GridLine>
 
                 </Grid>
+                {user.ip &&
+                <Grid
+                    container
+                    direction="column"
+                    justify="flex-start"
+                    alignItems="flex-start"
+                >
+                    <GridLine caption={'ip адрес:'} property={user.ip} marginLeft={'60px'}>
+                        {user.ip}
+                    </GridLine>
+
+                </Grid>
+                }
                 {user.url &&
                     <Grid container  justify='flex-start' style={{marginTop:'20px'}}>
                         <Grid item>

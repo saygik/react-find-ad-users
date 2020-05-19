@@ -11,10 +11,10 @@ import CardContent from "@material-ui/core/CardContent"
 import Typography from '@material-ui/core/Typography';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AppsIcon from '@material-ui/icons/Apps';
-import Grid from "@material-ui/core/Grid"
-import GridLine from "../UserPropertyLine/UserPropertyLine"
-import {presenceTimeFormat} from "../serices"
-import {withMobileDialog} from "@material-ui/core"
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
+import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import UsersList from './UsersList'
 
 // {title: "ЕК ИСУФР ТОРО", zakazchik: "Служба Т", osn: "Приказ №179НЗ от 19.02.2013", users: Array(2)}
 //  users :{name: "Крапивин Игорь Викторович", mail: "say@brnv.rw"}
@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     },
     listCaption:{
         color:'#4f774f',
-        fontSize:'1.1rem',
+        fontSize:'0.9rem',
         fontWeight: 600,
         textAlign:'left',
 
@@ -78,6 +78,11 @@ function SoftCard(props) {
     const handleSelectUser=(user)  => {
         findAndSelectUser(user)
     }
+    const handleSelectDoc=(doc)  => {
+        const win = window.open(doc.link, '_blank');
+        if (win != null) { win.focus(); }
+    }
+
     return (
         <Card className={classes.root}>
             <Box component={'div'} className={classes.number}>
@@ -114,55 +119,53 @@ function SoftCard(props) {
                                     {software.place ?<TextHighlighter searchValue={searchValues} text={software.place}    />: 'не определено'}
                         </Box>
                         <Box letterSpacing={1} className={classes.property}>
-                                    <Box component="span" letterSpacing={3} className={classes.propCaption}>
-                                        основание:&nbsp;
-                                    </Box>
+                            <Box component="span" letterSpacing={3} className={classes.propCaption}>
+                                основание:&nbsp;
+                            </Box>
                             {software.osn ? <TextHighlighter searchValue={searchValues} text={software.osn}    />: 'не определено'}
+                        </Box>
+                        <Box letterSpacing={1} className={classes.property}>
+                            <Box component="span" letterSpacing={3} className={classes.propCaption}>
+                                разработчик:&nbsp;
+                            </Box>
+                            {software.contacts ? <TextHighlighter searchValue={searchValues} text={software.contacts}    />: 'не определено'}
                         </Box>
 
                     </>
                 }
             />
-
             <CardContent style={{padding:'0px', paddingLeft:'40px',paddingTop:'20px'}}>
-                {software.users &&
-                <>
-                    <Box component="span" letterSpacing={3} className={classes.listCaption} style={{marginTop:'30px', marginLeft:'16px'}}>
-                        Сопровождается в ИВЦ НОД-2:&nbsp;
-                    </Box>
-                    <Grid container  justify='flex-start' style={{marginTop:'5px', marginBottom:'20px', marginLeft:'16px'}}>
+                <UsersList caption={'Сопровождается в ИВЦ НОД-2'}
+                           list={software.users}
+                           handleSelect={handleSelectUser}
+                           icon={<ContactPhoneIcon style={{ fontSize: 24, color:'#009000' }}/>}
+                />
+                <UsersList caption={'Сопровождается в Волковысском секторе ИВЦ'}
+                           list={software.usersvolk}
+                           handleSelect={handleSelectUser}
+                           icon={<ContactPhoneIcon style={{ fontSize: 24, color:'#009000' }}/>}
+                />
+                <UsersList caption={'Сопровождается в Гродненском секторе ИВЦ'}
+                           list={software.usersgrod}
+                           handleSelect={handleSelectUser}
+                           icon={<ContactPhoneIcon style={{ fontSize: 24, color:'#009000' }}/>}
+                />
+                <UsersList caption={'Сопровождается в Лидском секторе ИВЦ'}
+                           list={software.userslid}
+                           handleSelect={handleSelectUser}
+                           icon={<ContactPhoneIcon style={{ fontSize: 24, color:'#009000' }}/>}
+                />
+                <UsersList caption={'Сопровождается в Лунинецком секторе ИВЦ'}
+                           list={software.userslun}
+                           handleSelect={handleSelectUser}
+                           icon={<ContactPhoneIcon style={{ fontSize: 24, color:'#009000' }}/>}
+                />
+                <UsersList caption={'Техническая документация:'}
+                           list={software.docs}
+                           handleSelect={handleSelectDoc}
+                           icon={<LocalLibraryIcon style={{ fontSize: 24, color:'#2a2c90' }}/>}
+                />
 
-                        <Box letterSpacing={3} className={classes.url}>
-                            {software.users.map((user,index)=>{
-                                return <Grid item key={index}>
-                                    <Link href="#" onClick={()=>handleSelectUser(user)}>
-                                        <TextHighlighter searchValue={searchValues} text={user.name} />
-                                    </Link>
-                                </Grid>
-                            })}
-                        </Box>
-                    </Grid>
-                </>
-                }
-                {software.docs &&
-                <>
-                    <Box component="span" letterSpacing={3} className={classes.listCaption} style={{marginTop:'30px', marginLeft:'16px'}}>
-                        Техническая документация:&nbsp;
-                    </Box>
-                    <Grid container  justify='flex-start' style={{marginTop:'5px', marginBottom:'20px', marginLeft:'16px'}}>
-
-                        <Box letterSpacing={3} className={classes.url}>
-                            {software.docs.map((doc,index)=>{
-                                return <Grid item key={index}>
-                                    <Link href={doc.link} target="_blank">
-                                        {doc.name}
-                                    </Link>
-                                </Grid>
-                            })}
-                        </Box>
-                    </Grid>
-                </>
-                }
             </CardContent>
 
         </Card>

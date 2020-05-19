@@ -76,15 +76,16 @@ const Bar = (props) => {
                             </Grid>
                         </Grid>
                         <Grid item xs={2} className={classes.box} >
-                            <IconButton
-                            className={classes.expand}
-                            onClick={handleExpandClick}
-                            aria-expanded={expanded}
-                            aria-label="show more"
-                            size="small"
-                        >
-                            настройки {expanded ? <ExpandLessIcon/> : <ExpandMoreIcon />}
+                            {serachType === 'peoples' && <IconButton
+                                className={classes.expand}
+                                onClick={handleExpandClick}
+                                aria-expanded={expanded}
+                                aria-label="show more"
+                                size="small"
+                            >
+                                настройки {expanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
                             </IconButton>
+                            }
                         </Grid>
                     </Grid>
                     <Collapse in={expanded} timeout="auto" unmountOnExit>
