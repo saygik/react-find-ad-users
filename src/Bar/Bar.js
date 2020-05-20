@@ -7,14 +7,13 @@ import Typography from "@material-ui/core/Typography"
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from "@material-ui/core/InputBase"
 import {fade, makeStyles} from "@material-ui/core/styles"
-import Badge from '@material-ui/core/Badge';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
-import Paper from "@material-ui/core/Paper"
-import {SortPanel, SwitchPanel} from "./Panels"
+import { SwitchPanel, FindSettingsPanel} from "./Panels"
 import {blueGrey} from "@material-ui/core/colors"
+import FlipNumbers from "react-flip-numbers";
 
 const Bar = (props) => {
     const {searchValue, handleSearch, count,sortState, setSortState,
@@ -89,28 +88,19 @@ const Bar = (props) => {
                         </Grid>
                     </Grid>
                     <Collapse in={expanded} timeout="auto" unmountOnExit>
-                            <Grid container
-                                  spacing={0}
-                                  direction="row"
-                                  justify="flex-end"
-                                  alignItems="flex-end"
-                                  style={{width:'100%',marginTop:'20px',marginBottom:'10px',}}>
-                                <Grid item xs={8} >
-                                    <Paper className={classes.paper}>
-                                        <SortPanel sortState={sortState} setSortState={setSortState}/>
-                                    </Paper>
-
-                                </Grid>
-                                <Grid item xs={1} >
-                                </Grid>
-                            </Grid>
+                        <FindSettingsPanel sortState={sortState} setSortState={setSortState}/>
                     </Collapse>
                 </Grid>
             </Toolbar>
             <Box  className={classes.badgeBox}>
-                <Badge badgeContent={count} max={999}  classes={{ badge: classes.badge }} >
-
-                </Badge>
+                <FlipNumbers
+                    play
+                    color="#fff"
+                    background="#3f51b5"
+                    width={15}
+                    height={25}
+                    numbers={`${count}`}
+                />
             </Box>
         </AppBar>
     </>
@@ -194,14 +184,6 @@ const useStyles = makeStyles(theme => ({
             color:'#ffffff',
             backgroundColor: "transparent"
         }
-    },
-    paper: {
-        backgroundColor:theme.palette.background.default,
-        padding: '5px',
-        paddingLeft: '15px',
-        paddingBottom: '1px',
-        marginTop: '-15px',
-        width: '100%',
     },
     count: {
         color: blueGrey[200],

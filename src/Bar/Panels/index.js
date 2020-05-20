@@ -1,4 +1,4 @@
-import SortPanel from "./SortPanel"
 import SwitchPanel from "./SwitchPanel"
+import FindSettingsPanel from './FindSettingsPanel'
 
-export {SortPanel, SwitchPanel}
+export {SwitchPanel, FindSettingsPanel}

@@ -50,6 +50,8 @@ const SearchBar=()=>{
         company: true,
         department: true,
         cn: true,
+        skype: false,
+        phone: false
     });
     const sortFields=useMemo(()=>Object.entries(sortState).filter(prop=>prop[1]).map(prop=>prop[0]),[sortState])
     const [timeout,setNewTimeout]=useState(0)                 //Задержка фильтра при наборе текста
@@ -86,6 +88,13 @@ const SearchBar=()=>{
             })
             filtredSoft = _.filter(filtredSoft, soft => _.includes(soft.title.toUpperCase(), searchValue.toUpperCase()))
         }
+        if (sortState.skype) {
+            filtredUsers = _.filter(filtredUsers, user => user.sip && user.sip.length>3)
+        }
+        if (sortState.phone) {
+            filtredUsers = _.filter(filtredUsers, user => user.telephoneNumber && user.telephoneNumber.length>3)
+        }
+
         const sortedUsers = _.sortBy(filtredUsers, sortFields)
         setFiltredSoft(_.sortBy(filtredSoft, 'title'))
         setAdFiltredUsers(sortedUsers)
@@ -125,7 +134,7 @@ const SearchWithTimeout=()=>{
         const interval = setInterval(() => {
             setLoading(true)
             fetchUsers()
-        }, 60000);
+        }, 300000);
 
         return () => clearInterval(interval);
     },[])
@@ -143,7 +152,7 @@ const SearchWithTimeout=()=>{
             setSelectedUser({});
         }
     };
-    console.log('-loading-',loading)
+
     return (
         <div className={classes.root}>
             <Bar searchValue={searchValue}
