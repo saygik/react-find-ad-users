@@ -13,7 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import { SwitchPanel, FindSettingsPanel} from "./Panels"
 import {blueGrey} from "@material-ui/core/colors"
-import FlipNumbers from "react-flip-numbers";
+import CountUp from 'react-countup';
 
 const Bar = (props) => {
     const {searchValue, handleSearch, count,sortState, setSortState,
@@ -93,14 +93,15 @@ const Bar = (props) => {
                 </Grid>
             </Toolbar>
             <Box  className={classes.badgeBox}>
-                <FlipNumbers
-                    play
-                    color="#fff"
-                    background="#3f51b5"
-                    width={15}
-                    height={25}
-                    numbers={`${count}`}
-                />
+                {/*<FlipNumbers*/}
+                {/*    play*/}
+                {/*    color="#fff"*/}
+                {/*    background="#3f51b5"*/}
+                {/*    width={15}*/}
+                {/*    height={25}*/}
+                {/*    numbers={`${count}`}*/}
+                {/*/>*/}
+                <CountUp end={count} />
             </Box>
         </AppBar>
     </>
@@ -168,9 +169,11 @@ const useStyles = makeStyles(theme => ({
     badgeBox: {
         margin:'5px',
         position: 'absolute',
-        right: theme.spacing(4),
-        top: theme.spacing(1),
+        right: theme.spacing(2),
+        top: theme.spacing(0),
         color:'#d9d9d9',
+        fontSize:'28px',
+        fontWeight:'bold',
         padding:0,
         "&:hover": {
             color:'#ffffff',
