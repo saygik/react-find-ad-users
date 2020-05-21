@@ -12,8 +12,6 @@ const SettingsPanelTab=(props)=> {
 
     return (
         <FormControl component="fieldset">
-            <FormLabel component="legend"></FormLabel>
-            <FormGroup>
                 {
                     settings.map((oneSetting,index)=>
                         <SettingsSwitch key={index}
@@ -22,7 +20,6 @@ const SettingsPanelTab=(props)=> {
                                         sortState={sortState}
                                         handleChange={handleChange}/>)
                 }
-            </FormGroup>
             <Divider/>
             <FormHelperText>{label}</FormHelperText>
         </FormControl>

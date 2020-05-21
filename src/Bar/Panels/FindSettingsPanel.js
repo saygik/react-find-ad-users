@@ -58,6 +58,8 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: '15px',
         paddingBottom: '5px',
         marginTop: '-15px',
+        marginBottom: '15px',
         width: '100%',
+        height: '100px'
     },}))
 export default FindSettingsPanel
