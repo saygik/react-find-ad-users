@@ -124,9 +124,9 @@ const SearchWithTimeout=()=>{
     useEffect( ()=>{
         async function fetchUsers() {
             const res= await api.getAdUser()
-            setAdUsers(res)
+            if (res.length>1) setAdUsers(res)
             const soft= await api.getSoftware()
-            setSoftware(soft)
+            if (soft.length>1) setSoftware(soft)
             setLoading(false)
         }
         setLoading(true)
@@ -168,7 +168,7 @@ const SearchWithTimeout=()=>{
                  serachType={serachType}
                  setSerachType={setSerachType}
             />
-            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 220 : 107, height: 3,}}/>
+            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 251 : 107, height: 3,}}/>
             <Grid container justify="center" className={classes.cardsGrid}>
                 <Grid  item  xs={8} >
                             {countRecords === 0

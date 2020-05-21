@@ -29,7 +29,7 @@ const FindSettingsPanel = (props) => {
               direction="row"
               justify="flex-end"
               alignItems="flex-end"
-              style={{width:'100%',marginTop:'20px',marginBottom:'10px',}}>
+              style={{width:'100%',marginTop:'15px'}}>
             <Grid item xs={8} >
                 <Paper className={classes.paper}>
                 <Grid container
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor:theme.palette.background.default,
         padding: '5px',
         paddingLeft: '15px',
-        paddingBottom: '1px',
+        paddingBottom: '5px',
         marginTop: '-15px',
         width: '100%',
     },}))

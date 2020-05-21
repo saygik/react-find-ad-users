@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {avatarColors} from './serices'
 import {withMobileDialog} from "@material-ui/core"
-axios.defaults.timeout = 10000
+axios.defaults.timeout = 30000
 
 //const _apiBase = 'http://vm-say-work.brnv.rw:9003'
 const _apiBase = 'http://ad-users.brnv.rw'
