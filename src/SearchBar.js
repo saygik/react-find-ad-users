@@ -20,10 +20,23 @@ const useStyles = makeStyles(theme => ({
         marginRight: theme.spacing(2),
     },
     cardsGrid: {
-        marginTop: theme.spacing(4),
+        marginTop: theme.spacing(2),
+        [theme.breakpoints.down('sm')]: {
+            marginTop: theme.spacing(8),
+        },
     },
 
 }));
+const loadingSettingsInit={
+    peoples:{
+        loading:false,
+        progress:100
+    },
+    soft:{
+        loading:false,
+        progress:100
+    }
+}
 
 const FilterProgress = withStyles({
     colorPrimary: {
@@ -39,6 +52,7 @@ const SearchBar=()=>{
     const [searching,setSearching]=useState(false)              //Поиск
     const [serachType, setSerachType] = React.useState('peoples'); //Тип поиска (люди-программы)
     const [loading,setLoading]=useState(false)                  //Загрузка
+    const [loadingSettings,setLoadingSettings]=useState(loadingSettingsInit)                  //Загрузка
     const [searchValue,setSearchValue]=useState('')             //Значение в поле поиска
     const [adUsers,setAdUsers]=useState([])                     //Все пользователи домена brnv.rw
     const [software,setSoftware]=useState([])                   //Все программы на обслуживании ИВЦ
@@ -65,6 +79,7 @@ const SearchBar=()=>{
 
     const countRecords=useMemo(()=>{
         return isUsers ? adFiltredUsers.length:filtredSoft.length
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[adFiltredUsers,filtredSoft])
 
     const handleSearch=(e)=>setSearchValue(e.target.value)
@@ -119,20 +134,43 @@ const SearchWithTimeout=()=>{
             setAdFiltredUsers([])
             setFiltredSoft([])
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[searchValues, sortFields])
 
+const SetPeopleProgress=(proc)=>{
+    setLoadingSettings({...loadingSettingsInit, peoples:{
+            loading:proc<100,
+            progress:proc
+        }})
+    }
+    const SetSoftProgress=(proc)=> {
+        setLoadingSettings({...loadingSettingsInit, soft:{
+                loading:proc<100,
+                progress:proc
+            }})
+    }
     useEffect( ()=>{
         async function fetchUsers() {
-            const res= await api.getAdUser()
+            setLoading(true)
+            setLoadingSettings({...loadingSettingsInit, peoples:{
+                    loading:true,
+                    progress:0
+                }})
+            const res= await api.getAdUser(SetPeopleProgress)
             if (res.length>1) setAdUsers(res)
-            const soft= await api.getSoftware()
+            SetPeopleProgress(100)
+            setLoadingSettings({...loadingSettingsInit, soft:{
+                    loading:true,
+                    progress:0
+                }})
+            const soft= await api.getSoftware(SetSoftProgress)
             if (soft.length>1) setSoftware(soft)
+            SetSoftProgress(100)
             setLoading(false)
+            setLoadingSettings(loadingSettingsInit)
         }
-        setLoading(true)
         fetchUsers()
         const interval = setInterval(() => {
-            setLoading(true)
             fetchUsers()
         }, 300000);
 
@@ -143,6 +181,11 @@ const SearchWithTimeout=()=>{
     const handleDialogClose = () => {
         setSelectedUser({});
     };
+    const handleClear = () => {
+        setSearchValue('')
+    };
+
+
     const findAndSelectUser = (user) => {
         if (!user) return setSelectedUser({});
         const findedUser=adUsers.find(adUser=> adUser.cn===user.name || adUser.mail===user.mail)
@@ -152,7 +195,6 @@ const SearchWithTimeout=()=>{
             setSelectedUser({});
         }
     };
-
     return (
         <div className={classes.root}>
             <Bar searchValue={searchValue}
@@ -165,10 +207,12 @@ const SearchWithTimeout=()=>{
                  expanded={expanded}
                  setExpanded={setExpanded}
                  loading={loading}
+                 loadingSettings={loadingSettings}
                  serachType={serachType}
                  setSerachType={setSerachType}
+                 handleClear={handleClear}
             />
-            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 220 : 107, height: 3,}}/>
+            <FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'} style={{marginTop: expanded ? 220 : 107, height: 3}}/>
             <Grid container justify="center" className={classes.cardsGrid}>
                 <Grid  item  xs={8} >
                             {countRecords === 0

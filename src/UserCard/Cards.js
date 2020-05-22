@@ -20,6 +20,7 @@ const Cards = (props) => {
         page=0
         setAdShowedUsers([])
         setSearching(false)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[adFiltredUsers])
 
     return <InfiniteScroll

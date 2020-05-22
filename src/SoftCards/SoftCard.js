@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react'
+import React from 'react'
 import {makeStyles} from "@material-ui/core/styles"
 import {grey} from "@material-ui/core/colors"
 import Card from "@material-ui/core/Card"
@@ -8,10 +8,8 @@ import IconButton from "@material-ui/core/IconButton"
 import Link from "@material-ui/core/Link"
 import TextHighlighter from "../TextHighlighter"
 import CardContent from "@material-ui/core/CardContent"
-import Typography from '@material-ui/core/Typography';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AppsIcon from '@material-ui/icons/Apps';
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import UsersList from './UsersList'

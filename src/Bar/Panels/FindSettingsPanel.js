@@ -30,7 +30,7 @@ const FindSettingsPanel = (props) => {
               justify="flex-end"
               alignItems="flex-end"
               style={{width:'100%',marginTop:'15px'}}>
-            <Grid item xs={8} >
+            <Grid item xs={7} >
                 <Paper className={classes.paper}>
                 <Grid container
                       spacing={0}

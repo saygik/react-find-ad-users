@@ -1,21 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {makeStyles} from "@material-ui/core/styles"
 import SoftCard from "./SoftCard"
 import InfiniteScroll from "react-infinite-scroller"
-import UserCard from "../UserCard/Card"
 
-const useStyles = makeStyles(theme => ({
-    root: {
-        marginTop: theme.spacing(3),
-    },
-    searchResult: {
-        marginRight: theme.spacing(2),
-    },
-
-}));
 let page=0
 const SoftCards = (props) => {
-    const classes = useStyles();
     const {software,searchValues, setSearching, findAndSelectUser}=props
     const [showedSoft,setShowedSoft]=useState([])         //Показанные на экране пользователи
 
@@ -31,6 +19,7 @@ const SoftCards = (props) => {
         page=0
         setShowedSoft([])
         setSearching(false)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[software])
 
     return <InfiniteScroll

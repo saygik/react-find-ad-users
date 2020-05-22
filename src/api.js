@@ -1,18 +1,21 @@
 import axios from 'axios'
 import {avatarColors} from './serices'
-import {withMobileDialog} from "@material-ui/core"
 axios.defaults.timeout = 30000
 
 //const _apiBase = 'http://vm-say-work.brnv.rw:9003'
 const _apiBase = 'http://ad-users.brnv.rw'
 const api = {};
-api.getAdUser=()=>{
+api.getAdUser=(setProgress)=>{
     return new Promise((resolve, reject) => {
         axios({
             method: 'get',
             url: _apiBase+'/domain',
             headers: {
                 'Content-Type': 'application/json'
+            },
+            onDownloadProgress: function (progressEvent) {
+                const proc=Number((progressEvent.loaded/progressEvent.total*100).toFixed(1));
+                setProgress(proc)
             },
         })
             .then((response)=> {
@@ -40,7 +43,7 @@ api.getAdUser=()=>{
     });
 }
 
-api.getSoftware=()=>{
+api.getSoftware=(setProgress)=>{
     return new Promise((resolve, reject) => {
         axios({
             method: 'get',
@@ -48,6 +51,11 @@ api.getSoftware=()=>{
             headers: {
                 'Content-Type': 'application/json'
             },
+            onDownloadProgress: function (progressEvent) {
+                const proc=Number((progressEvent.loaded/progressEvent.total*100).toFixed(1));
+                setProgress(proc)
+            },
+
         })
             .then((response)=> {
                 if (response.data) {
