@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     settingsIcon: {
         width: theme.spacing(5),
         top:'0px',
-        right:'0px',
+        right:'10px',
         height: '100%',
         position: 'absolute',
         display: 'flex',
