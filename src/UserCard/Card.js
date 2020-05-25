@@ -21,6 +21,10 @@ import Phone from './Phones/Phone'
 import OtherPhones from './Phones/OtherPhones'
 import GridLine from '../UserPropertyLine'
 import {presenceTimeFormat} from '../serices'
+import IpUtilsMenu from './IpUtilsMenu'
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 
 const useStyles = makeStyles(theme => ({
@@ -172,8 +176,8 @@ const useStyles = makeStyles(theme => ({
                     justify="flex-start"
                     alignItems="flex-start"
                 >
-                    <GridLine caption={'ip адрес:'} property={user.ip} marginLeft={'60px'}>
-                        {user.ip}
+                    <GridLine caption={''} property={user.ip} marginLeft={'60px'}>
+                        <IpUtilsMenu ip={user.ip}/>
                     </GridLine>
 
                 </Grid>

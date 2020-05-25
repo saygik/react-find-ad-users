@@ -90,16 +90,16 @@ function SoftCard(props) {
 
                 style={{paddingTop: '0px', paddingBottom: '3px',marginTop: '-10px'}}
                 avatar={<AppsIcon/>}
-                action={
-                    <IconButton aria-label="settings" onClick={handleSelectSoft}>
-                        <MoreVertIcon />
-                    </IconButton>
-                }
+                // action={
+                //     <IconButton aria-label="settings" onClick={handleSelectSoft}>
+                //         <MoreVertIcon />
+                //     </IconButton>
+                // }
                 title={
                     <Box letterSpacing={3} className={classes.title}>
-                        <Link href="#" onClick={handleSelectSoft} color="inherit">
+                        {/*<Link href="#" onClick={handleSelectSoft} color="inherit">*/}
                             <TextHighlighter searchValue={searchValues} text={software.title}  />
-                        </Link>
+                        {/*</Link>*/}
                     </Box>
                 }
                 subheader={
