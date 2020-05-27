@@ -49,9 +49,7 @@ const UsersList = ({caption, list, handleSelect, icon}) => {
                     {list.map((item,index)=>{
                         return <Grid item key={index}>
                             <Link href="#" onClick={()=>handleSelect(item)}>
-                                {item.name} {item.phone && <Box component="span" style={{color:'#8a8a8a'}}>
-                                                                , тел.{item.phone}
-                                                           </Box>}
+                                {item.name}
                             </Link>
                         </Grid>
                     })}
