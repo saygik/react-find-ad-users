@@ -55,6 +55,7 @@ const SearchBar=()=>{
     const [loadingSettings,setLoadingSettings]=useState(loadingSettingsInit)                  //Загрузка
     const [searchValue,setSearchValue]=useState('')             //Значение в поле поиска
     const [adUsers,setAdUsers]=useState([])                     //Все пользователи домена brnv.rw
+    const [internetUsers,setInternetUsers]=useState([])                     //Все пользователи домена brnv.rw
     const [software,setSoftware]=useState([])                   //Все программы на обслуживании ИВЦ
     const [adFiltredUsers,setAdFiltredUsers]=useState([])       //Отфильтрованные пользователи
     const [filtredSoft,setFiltredSoft]=useState([])             //Отфильтрованный софт
@@ -86,7 +87,7 @@ const SearchBar=()=>{
 
     const search=()=>{
 
-        let filtredUsers={...adUsers}
+        let filtredUsers={...usersWithInternet}
         let filtredSoft={...software}
         if (searchValues[0]!=='*') {
             _.forEach(searchValues, searchValue => {
@@ -101,7 +102,12 @@ const SearchBar=()=>{
                     }
                 )
             })
-            filtredSoft = _.filter(filtredSoft, soft => _.includes(soft.title.toUpperCase(), searchValue.toUpperCase()))
+            filtredSoft = _.filter(filtredSoft, soft => {
+                return _.includes(soft.title.toUpperCase(), searchValue.toUpperCase())
+                    || (soft.tags && _.includes(soft.tags.toUpperCase(), searchValue.toUpperCase()))
+
+                }
+            )
         }
         if (sortState.skype) {
             filtredUsers = _.filter(filtredUsers, user => user.sip && user.sip.length>3)
@@ -149,6 +155,17 @@ const SetPeopleProgress=(proc)=>{
                 progress:proc
             }})
     }
+
+    const usersWithInternet=useMemo(()=>{
+        if (!internetUsers || internetUsers.length<1) return adUsers
+        const users=adUsers.map(aduser=>{
+            return {
+                ...aduser,
+                internet:_.some(internetUsers, ['name', aduser.userPrincipalName])
+            }
+        })
+        return users
+    },[adUsers,internetUsers])
     useEffect( ()=>{
         async function fetchUsers() {
             setLoading(true)
@@ -156,6 +173,7 @@ const SetPeopleProgress=(proc)=>{
                     loading:true,
                     progress:0
                 }})
+
             const res= await api.getAdUser(SetPeopleProgress)
             if (res.length>1) setAdUsers(res)
             SetPeopleProgress(100)
@@ -168,6 +186,8 @@ const SetPeopleProgress=(proc)=>{
             SetSoftProgress(100)
             setLoading(false)
             setLoadingSettings(loadingSettingsInit)
+            const inet= await api.getInternetGroup()
+            if (inet.length>1) setInternetUsers(inet)
         }
         fetchUsers()
         const interval = setInterval(() => {
@@ -188,13 +208,14 @@ const SetPeopleProgress=(proc)=>{
 
     const findAndSelectUser = (user) => {
         if (!user) return setSelectedUser({});
-        const findedUser=adUsers.find(adUser=> adUser.cn===user.name || adUser.mail===user.mail)
+        const findedUser=usersWithInternet.find(adUser=> adUser.cn===user.name || adUser.mail===user.mail)
         if (findedUser) {
             setSelectedUser(findedUser);
         } else {
             setSelectedUser({});
         }
     };
+
     return (
         <div className={classes.root}>
             <Bar searchValue={searchValue}

@@ -30,7 +30,7 @@ const Cards = (props) => {
         threshold={10}
         useWindow={true}
     >
-        {adShowedUsers.map((user, index) => <UserCard key={user.objectGUID}
+        {adShowedUsers.map((user, index) => <UserCard key={user.userPrincipalName}
                                                       user={user}
                                                       selectUser={setSelectedUser}
                                                       index={index}

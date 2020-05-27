@@ -4,11 +4,8 @@ import {grey} from "@material-ui/core/colors"
 import Card from "@material-ui/core/Card"
 import Box from "@material-ui/core/Box"
 import CardHeader from "@material-ui/core/CardHeader"
-import IconButton from "@material-ui/core/IconButton"
-import Link from "@material-ui/core/Link"
 import TextHighlighter from "../TextHighlighter"
 import CardContent from "@material-ui/core/CardContent"
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AppsIcon from '@material-ui/icons/Apps';
 import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
@@ -22,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     root: {
         minWidth: '700px',
         marginTop:20,
+        padding:5
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -63,16 +61,22 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 400,
         textAlign:'left',
     },
+    tags:{
+        color:'#8ea78e',
+        fontSize:'.7rem',
+        fontWeight: 400,
+        textAlign:'left',
+    },
 }));
 
 function SoftCard(props) {
     const classes = useStyles();
     const {software,index, searchValues,findAndSelectUser}=props
 
-    const handleSelectSoft = event => {
-        event.preventDefault();
-
-    }
+    // const handleSelectSoft = event => {
+    //     event.preventDefault();
+    //
+    // }
     const handleSelectUser=(user)  => {
         findAndSelectUser(user)
     }
@@ -163,7 +167,12 @@ function SoftCard(props) {
                            handleSelect={handleSelectDoc}
                            icon={<LocalLibraryIcon style={{ fontSize: 24, color:'#2a2c90' }}/>}
                 />
-
+                {
+                    software.tags &&
+                    <Box letterSpacing={3} className={classes.tags}>
+                        тэги: <TextHighlighter searchValue={searchValues} text={software.tags}  />
+                    </Box>
+                }
             </CardContent>
 
         </Card>

@@ -140,7 +140,14 @@ function UserCard(props) {
                         </Box>
                     </Grid>
                 </Grid>
-
+                <Grid container  justify='flex-start' style={{marginTop:'30px'}}>
+                    <Grid item>
+                        {/*<UserNameBox text={user.cn} searchValue={searchValue} selectUser={selectUser} classes={classes}/>*/}
+                        <Box  className={classes.userurl}>
+                            {user.dn }
+                        </Box>
+                    </Grid>
+                </Grid>
             </CardContent>
             <CardActions disableSpacing style={{marginLeft:'80px'}}>
                 <Grid
@@ -167,6 +174,7 @@ function UserCard(props) {
                                                                 </GridLine>
                       )}
                 </Grid>
+
 
             </CardActions>
 
