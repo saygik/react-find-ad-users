@@ -29,8 +29,8 @@ const FindSettingsPanel = (props) => {
               direction="row"
               justify="flex-end"
               alignItems="flex-end"
-              style={{width:'100%',marginTop:'15px'}}>
-            <Grid item xs={7} >
+              style={{width:'100%',marginTop:'15px', padding:'7px'}}>
+            <Grid item xs={12} >
                 <Paper className={classes.paper}>
                 <Grid container
                       spacing={0}

@@ -1,12 +1,13 @@
 import React from 'react'
 import InputBase from "@material-ui/core/InputBase"
 import IconButton from "@material-ui/core/IconButton"
-import {SwitchPanel} from "../Panels"
 import {fade, makeStyles} from "@material-ui/core/styles"
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
+import Box from "@material-ui/core/Box"
+import CountUp from "react-countup"
 
 
 const useStyles = makeStyles(theme => ({
@@ -17,6 +18,8 @@ const useStyles = makeStyles(theme => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
         backgroundColor: fade(theme.palette.common.white, 0.05),
+        paddingTop:'3px',
+        paddingBottom:'12px',
         marginLeft: 0,
         width: '100%',
         color: '#fff',
@@ -93,12 +96,33 @@ const useStyles = makeStyles(theme => ({
             cursor: 'pointer'
         },
     },
+    badgeBox: {
+        right: theme.spacing(2),
+        paddingTop: '12px',
+        color:'#d9d9d9',
+        fontSize:'20px',
+        padding:0,
+
+        [theme.breakpoints.up('xs')]: {
+            display:'none'
+        },
+        [theme.breakpoints.down('xs')]: {
+            display:'inline'
+        },
+        "&:hover": {
+            color:'#ffffff',
+            backgroundColor: "transparent"
+        }
+    },
+    countBox: {
+        paddingTop: '10px',
+    },
 }));
 
 
 
 const SearchInput = (props) => {
-    const {serachType,setSerachType, loading,searchValue,handleSearch,expanded, handleExpandClick,handleClear}=props
+    const {serachType,count, loading,searchValue,handleSearch,expanded, handleExpandClick,handleClear}=props
     const classes = useStyles();
     return(
         <div className={classes.root}>
@@ -137,7 +161,13 @@ const SearchInput = (props) => {
                 </div>
             </div>
             <div className={classes.grow} />
-            <SwitchPanel serachType={serachType} setSerachType={setSerachType} />
+            {/*<SwitchPanel serachType={serachType} setSerachType={setSerachType} />*/}
+                <Box display="flex" flexDirection="row-reverse" >
+                    <Box className={classes.badgeBox} >
+                        <CountUp end={count} />
+                    </Box>
+
+            </Box>
         </div>
         )
 }
