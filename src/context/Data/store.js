@@ -211,6 +211,7 @@ export const DataProvider = ({ children }) => {
     selectors.searchTypeLabel=useMemo(()=> {
         if(!state.serachType) return ''
         return searchTypeLabels[state.serachType]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     } ,[state.serachType])
 
     selectors.loadingProgress=useMemo(()=> state.loadingProgress ,[state.loadingProgress])

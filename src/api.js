@@ -2,8 +2,8 @@ import axios from 'axios'
 import {avatarColors} from './services'
 axios.defaults.timeout = 30000
 
-const _apiBase = 'http://vm-say-work.brnv.rw:9003'
-//const _apiBase = 'http://ad-users.brnv.rw'
+//const _apiBase = 'http://vm-say-work.brnv.rw:9003'
+const _apiBase = 'http://ad-users.brnv.rw'
 const api = {};
 api.getAdUser=(setProgress)=>{
     return new Promise((resolve, reject) => {
