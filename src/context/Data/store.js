@@ -1,24 +1,36 @@
-import React, {useReducer, useContext, useEffect, useMemo, useState} from 'react'
+import React, {useReducer, useContext, useEffect, useMemo, useState, useCallback} from 'react'
 import _ from 'lodash'
 import api from '../../api'
 import {reducer, initialState} from './reducer'
+import moment from 'moment'
 import {
-    FETCH_DATA_REQUEST,
-    FETCH_DATA_SUCCESS,
-    SET_LOADING_PROGRESS,
-    FETCH_USERS_SUCCESS,
-    FETCH_SOFT_SUCCESS,
+//    FETCH_DATA_REQUEST,
+    PEOPLES_DATA_REQUEST,
+    PEOPLES_DATA_LOADING_PROGRESS,
+    PEOPLES_DATA_ERROR,
+    PEOPLES_DATA_SUCCESS,
+    SOFT_DATA_REQUEST,
+    SOFT_DATA_LOADING_PROGRESS,
+    SOFT_DATA_SUCCESS,
+    SOFT_DATA_ERROR,
+    ZALS_DATA_REQUEST,
+    ZALS_DATA_SUCCESS,
+    ZALS_DATA_ERROR,
     FETCH_INTERNET_GROUP_USERS_SUCCESS,
     FETCH_USERS_ALERTS_SUCCESS,
     SET_SEARCH_VALUE,
-    SET_SEARCH_TYPE,
     SET_SORT_STATE,
     SET_USERS_FILTRED,
     SET_SOFT_FILTRED,
     SET_SEARCHING,
     SET_NO_SEARCHING,
-    SET_SELECTED_USER
+    SET_CURRENT_RESOURCE,
+    SET_SELECTED_USER,
+    SET_SIDEBAR,
+    SEARCH,
+    SET_USERS_SECOND_FILTERS
 } from "./action-types"
+import resourceTypes from './resource-types'
 
 const DataContext = React.createContext()
 
@@ -39,13 +51,58 @@ export const DataProvider = ({ children }) => {
     const emptyObject = {}
 //**************************************//
 //*******     actions     *****************//
-    const actions = {};
-    actions.setSearchValue= (value) =>  dispatch({type: SET_SEARCH_VALUE, payload:value})
-    actions.setSerachType= (value) =>  dispatch({type: SET_SEARCH_TYPE, payload:value})
-    actions.setSortState= (value) =>  dispatch({type: SET_SORT_STATE, payload:value})
-    actions.setSelectedUser= (value) =>  dispatch({type: SET_SELECTED_USER, payload:value})
+   const setCurrentResource=useCallback((value) => {
 
-    actions.selectUserByNameOrMail = (user) => {
+        switch (value) {
+            case resourceTypes.PEOPLES :
+                dispatch({type: SET_CURRENT_RESOURCE,payload: value})
+//                console.log('---',moment.duration(moment()-state.adUsers.updated)/1000)
+                 if(!state.adUsers.loaded || moment.duration(moment()-state.adUsers.updated)/1000>300)
+                     dispatch({type: PEOPLES_DATA_REQUEST})
+            case resourceTypes.SOFT :
+                dispatch({type: SET_CURRENT_RESOURCE,payload: value})
+                if(!state.software.loaded || moment.duration(moment()-state.software.updated)/1000>300)
+                    dispatch({type: SOFT_DATA_REQUEST})
+            case resourceTypes.ZALS :
+                dispatch({type: SET_CURRENT_RESOURCE,payload: value})
+                if(!state.zals.loaded || moment.duration(moment()-state.zals.updated)/1000>300)
+                    dispatch({type: ZALS_DATA_REQUEST})
+            default:
+                return
+        }
+    },[state.adUsers, state.software, state.zals])
+    const actions = {};
+    // actions.getData=useCallback((value) => {
+    //     switch (value) {
+    //         case 'peoples' :
+    //             dispatch({type: PEOPLES_DATA_REQUEST})
+    //         case 'soft' :
+    //             dispatch({type: SOFT_DATA_REQUEST})
+    //         default:
+    //             return
+    //     }
+    // },[])
+
+    actions.setSidebar= useCallback(value =>  dispatch({type: SET_SIDEBAR, payload:value}),[])
+    actions.setPeoplesSecondFilters= useCallback(value =>  dispatch({type: SET_USERS_SECOND_FILTERS, payload:value}),[])
+
+    actions.setSearchValue= useCallback(value =>  dispatch({type: SET_SEARCH_VALUE, payload:value}),[])
+    actions.setSortState= useCallback(value =>  dispatch({type: SET_SORT_STATE, payload:value}),[])
+    actions.setSelectedUser= useCallback(value =>  dispatch({type: SET_SELECTED_USER, payload:value}),[])
+    actions.refreshData= useCallback(() =>  {
+        switch (state.currentResource) {
+            case resourceTypes.PEOPLES :
+                    dispatch({type: PEOPLES_DATA_REQUEST})
+            case resourceTypes.SOFT :
+                dispatch({type: SOFT_DATA_REQUEST})
+            case resourceTypes.ZALS :
+                dispatch({type: ZALS_DATA_REQUEST})
+            default:
+                return
+        }
+    },[state.currentResource])
+
+    actions.selectUserByNameOrMail = useCallback(user => {
         if (!user) return dispatch({type: SET_SELECTED_USER, payload:emptyObject})
         const findedUser=adUsers.find(adUser=> adUser.cn===user.name || adUser.mail===user.mail)
         if (findedUser) {
@@ -53,9 +110,9 @@ export const DataProvider = ({ children }) => {
         } else {
             dispatch({type: SET_SELECTED_USER, payload: emptyObject})
         }
-    };
+    },[])
 
-    const adUsers=useMemo(()=> state.adUsers ,[state.adUsers])
+    const adUsers=useMemo(()=> state.adUsers.data ,[state.adUsers.data])
     const software=useMemo(()=> state.software ,[state.software])
     const usersWithInternet=useMemo(()=>{
         if (!state.internetUsers || state.internetUsers.length<1) return adUsers
@@ -78,14 +135,13 @@ export const DataProvider = ({ children }) => {
         return users
     },[usersWithInternet,state.userAlerts])
     const sortFields=useMemo(()=>Object.entries(state.sortState).filter(prop=>prop[1]).map(prop=>prop[0]),[state.sortState])
-    const searchValues=useMemo(()=> state.searchValue.split(' ') ,[state.searchValue])
 
 //**************************************//
 //***        side effects            ***//
 
 //*******  on Load
     useEffect(()=>{
-            dispatch({type: FETCH_DATA_REQUEST})
+//            dispatch({type: FETCH_DATA_REQUEST})
 
             // const interval = setInterval(() => {
             //     dispatch({type: FETCH_DATA_REQUEST})
@@ -95,56 +151,87 @@ export const DataProvider = ({ children }) => {
         }
         ,[])
 
+
+
     useEffect( ()=>{
-        const SetPeopleProgress=(proc)=>{
-            dispatch({type: SET_LOADING_PROGRESS,
-                payload: {...state.loadingProgress, peoples: {
-                        loading:proc<100,
-                        progress:proc
-                    }
-                }})
-        }
-        const SetSoftProgress=(proc)=> {
-            dispatch({type: SET_LOADING_PROGRESS,
-                payload: {...state.loadingProgress, soft: {
-                        loading:proc<100,
-                        progress:proc
-                    }
-                }})
-        }
-        const fetchData= async ()=>{
-            if (state.fetchDataRequest) {
-                dispatch({type: FETCH_DATA_REQUEST})
-                SetPeopleProgress(0)
-                const res = await api.getAdUser(SetPeopleProgress)
-                if (res.length > 1) dispatch({type: FETCH_USERS_SUCCESS, payload: res})
-                SetSoftProgress(0)
-                const soft= await api.getSoftware(SetSoftProgress)
-                if (soft.length>1) dispatch({type: FETCH_SOFT_SUCCESS, payload: soft})
-                dispatch({type: FETCH_DATA_SUCCESS})
+        if (state.adUsers.requested) {
+            const SetProgress=(proc)=>{
+                dispatch({type: PEOPLES_DATA_LOADING_PROGRESS, payload: proc })
+            }
+            const fetchData= async ()=>{
+                const res = await api.getAdUser(SetProgress)
+                if (res.length > 1) {
+                    dispatch({type: PEOPLES_DATA_SUCCESS, payload: res})
+                } else {
+                    dispatch({type: PEOPLES_DATA_ERROR})
+                }
                 const inet= await api.getInternetGroup()
                 if (inet.length>1) dispatch({type: FETCH_INTERNET_GROUP_USERS_SUCCESS, payload: inet})
                 const alerts= await api.getUserAlerts()
                 if (alerts.length>0) dispatch({type: FETCH_USERS_ALERTS_SUCCESS, payload: alerts})
             }
+            fetchData()
         }
-        fetchData()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ,[state.adUsers.requested])
+    useEffect( ()=>{
+            if (state.software.requested) {
+                const SetProgress=(proc)=>{
+                    dispatch({type: SOFT_DATA_LOADING_PROGRESS, payload: proc })
+                }
+                const fetchData= async ()=>{
+                    const res = await api.getSoftware(SetProgress)
+                    if (res.length > 1) {
+                        dispatch({type: SOFT_DATA_SUCCESS, payload: res})
+                    } else {
+                        dispatch({type: SOFT_DATA_ERROR})
+                    }
+                }
+                fetchData()
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        ,[state.fetchDataRequest])
+        ,[state.software.requested])
+    useEffect( ()=>{
+            if (state.zals.requested) {
+                const fetchData= async ()=>{
+                    const res = await api.getZals()
+                    if (res.length > 1) {
+                        dispatch({type: ZALS_DATA_SUCCESS, payload: res})
+                    } else {
+                        dispatch({type: ZALS_DATA_ERROR})
+                    }
+                }
+                fetchData()
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        ,[state.zals.requested])
+
+    useEffect( ()=>{
+            if (state.search) {
+                dispatch({type: SEARCH, payload: false })
+                dispatch({type: SET_SEARCHING})
+                search()
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        ,[state.search])
 
      const SearchWithTimeout=()=>{
         if(timeout) clearTimeout(timeout);
         const newTimeout = setTimeout(() => {
-            search()
-        }, 300);
+            dispatch({type: SEARCH, payload: true })
+        }, 500);
         setNewTimeout(newTimeout)
     }
     const search=()=>{
-        let filtredUsers={...usersWithInternetAndAlerts}
-        let filtredSoft={...software}
-        if (searchValues[0]!=='*') {
-            _.forEach(searchValues, searchValue => {
+        let filtredUsers=[...usersWithInternetAndAlerts]
+        let filtredSoft=[...software.data]
+        if (state.searchValue && state.searchValue.length>0) {
+            // const searchValues=state.searchValue.split(' ')
+            _.forEach(selectors.searchValues, searchValue => {
                 filtredUsers = _.filter(filtredUsers, user => {
                         return _.includes(user.cn.toUpperCase(), searchValue.toUpperCase())
                             || (user.title && _.includes(user.title.toUpperCase(), searchValue.toUpperCase()))
@@ -163,45 +250,54 @@ export const DataProvider = ({ children }) => {
                 }
             )
         }
-        if (state.sortState.skype) {
-            filtredUsers = _.filter(filtredUsers, user => user.sip && user.sip.length>3)
-        }
-        if (state.sortState.phone) {
-            filtredUsers = _.filter(filtredUsers, user => user.telephoneNumber && user.telephoneNumber.length>3)
+
+        if (filtredUsers.length>0) {
+            for (var filter in selectors.peoples.secondFilters) {
+                if (selectors.peoples.secondFilters[filter].value === 'true') {
+                    filtredUsers = _.filter(filtredUsers, user => user[filter] && !!user[filter])
+                } else if (selectors.peoples.secondFilters[filter].value === 'false') {
+                    filtredUsers = _.filter(filtredUsers, user => !user[filter])
+                }
+            }
+
         }
 
         const sortedUsers = _.sortBy(filtredUsers, sortFields)
+
         dispatch({type: SET_USERS_FILTRED, payload: sortedUsers})
         dispatch({type: SET_SOFT_FILTRED, payload: _.sortBy(filtredSoft, 'title')})
         dispatch({type: SET_NO_SEARCHING})
     }
     useEffect(()=>{
-        if (searchValues[0].length>1 || searchValues[0]==='*') {
-            dispatch({type: SET_SEARCHING})
-            SearchWithTimeout()
-        } else {
-            dispatch({type: SET_NO_SEARCHING})
-            dispatch({type: SET_USERS_FILTRED, payload: []})
-            dispatch({type: SET_SOFT_FILTRED, payload: []})
-        }
+        if(timeout) clearTimeout(timeout);
+        const newTimeout = setTimeout(() => {
+            dispatch({type: SEARCH, payload: true })
+        }, 500);
+        setNewTimeout(newTimeout)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[searchValues, sortFields])
+    },[state.searchValue, sortFields, state.adUsers.secondFilters])
 
 //***************************  Selectors  *********************//
 
     const selectors = {};
-
     selectors.adUsers=usersWithInternetAndAlerts
 
+    selectors.peoples=useMemo(()=> state.adUsers ,[state.adUsers])
     selectors.software=useMemo(()=> state.software ,[state.software])
+    selectors.zals=useMemo(()=> state.zals ,[state.zals])
+    selectors.orderedzals=useMemo(()=> _.sortBy(state.zals.data, o => o.order) ,[state.zals.data])
 
-    selectors.loading=useMemo(()=> state.loading,[state.loading])
+
+    selectors.loading=useMemo(()=> {
+        return state.adUsers.loading
+            || state.software.loading
+    },[state.adUsers.loading,state.software.loading])
 
     selectors.searching=useMemo(()=> state.searching,[state.searching])
 
     selectors.searchValue=useMemo(()=> state.searchValue ,[state.searchValue])
 
-    selectors.searchValues = searchValues
+    selectors.searchValues = useMemo(()=> state.searchValue.split(' ') ,[state.searchValue])
 
     selectors.serachType=useMemo(()=> state.serachType ,[state.serachType])
     const searchTypeLabels={
@@ -225,6 +321,7 @@ export const DataProvider = ({ children }) => {
     selectors.selectedUser=useMemo(()=> state.selectedUser ,[state.selectedUser])
 
     selectors.isCurrentListUsers=useMemo(()=>state.serachType==='peoples',[state.serachType])
+    selectors.sidebarOpen=useMemo(()=>state.sidebarOpen,[state.sidebarOpen])
 
     selectors.currentListCount=useMemo(()=> {
         return selectors.isCurrentListUsers ? state.adFiltredUsers.length:state.filtredSoft.length
@@ -232,7 +329,15 @@ export const DataProvider = ({ children }) => {
     } ,[state.adFiltredUsers,state.filtredSoft])
 
 //**************************************//
-    const value={state: state, selectors: selectors , actions:actions}
+    const value={
+        state: state,
+        selectors: selectors ,
+        actions:actions,
+        resourceTypes: resourceTypes,
+        setCurrentResource: setCurrentResource,
+        // searchValue:state.searchValue,
+        // setSearchValue: actions.setSearchValue
+    }
     return (
         <DataContext.Provider value={value}>
             {children}

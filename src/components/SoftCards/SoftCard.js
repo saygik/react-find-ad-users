@@ -18,7 +18,7 @@ import UsersList from './UsersList'
 const useStyles = makeStyles(theme => ({
     root: {
         minWidth: '700px',
-        marginTop:20,
+        marginBottom:20,
         padding:5
     },
     menuButton: {

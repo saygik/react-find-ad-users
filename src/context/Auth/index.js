@@ -1,4 +1,8 @@
-import {AuthProvider,useAuth} from './store'
+import AuthProvider from './AuthProvider'
+import useAuth from './useAuth'
+
 export {
-    AuthProvider,useAuth
+    AuthProvider,
+    useAuth
+
 }

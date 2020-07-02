@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Box from "@material-ui/core/Box"
 import UserCards from '../UserCards'
 import SoftCards from '../SoftCards'
-import NotFound from '../NotFound'
+import NotFound from '../layout/BeginToFind'
 import UserPropsDialog from '../UserProps'
 import {useData} from '../../context/Data'
 
@@ -36,8 +36,9 @@ const SearchBar=()=>{
 
     return (
         <Box mb={4}>
+
             <Grid container justify="center" className={classes.cardsGrid} mb={2}>
-                <Grid  item  xs={12} sm={10} md={8}>
+                <Grid  item  xs={12} sm={12} md={12}>
                             {currentListCount === 0
                                 ? <NotFound loading={searching} filtred={searchValues[0].length > 1}/>
                                 : isCurrentListUsers

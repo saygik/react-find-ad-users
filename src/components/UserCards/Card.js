@@ -20,8 +20,7 @@ import SubHeaderPanel from './Panels/SubHeaderPanel/SubHeaderPanel'
 const useStyles = makeStyles(theme => ({
     root: {
         // minWidth: '700px',
-        marginTop:20,
-         margin:10
+        marginBottom:20,
     },
 
     avatar: {
