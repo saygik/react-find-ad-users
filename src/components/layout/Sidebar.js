@@ -9,7 +9,7 @@ export const CLOSED_DRAWER_WIDTH = 55;
 
 const useStyles = makeStyles(
     theme => ({
-        drawerPaper: {
+        paper:{
             position: 'relative',
             height: 'auto',
             overflowX: 'hidden',
@@ -25,7 +25,25 @@ const useStyles = makeStyles(
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.leavingScreen,
             }),
+        },
+        drawerPaper: {
+            position: '-webkit-sticky',
+            height: 'auto',
+            overflowX: 'hidden',
+            width: props =>
+                props.open
+                    ? lodashGet(theme, 'sidebar.width', DRAWER_WIDTH)
+                    : lodashGet(
+                    theme,
+                    'sidebar.closedWidth',
+                    CLOSED_DRAWER_WIDTH
+                    ),
+            transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+            }),
             backgroundColor: 'transparent',
+            paddingTop: '5em',
             marginTop: '0.5em',
             marginRight: '1em',
             borderRight: 'none',
@@ -39,7 +57,7 @@ const useStyles = makeStyles(
                 border: 'none',
                 marginTop: '1.5em',
             },
-            zIndex: 'inherit',
+            zIndex: '55',
         },
     }),
     { name: 'Sidebar' }
@@ -80,21 +98,9 @@ const Sidebar = props => {
                 onMenuClick: handleClose,
             })}
         </Drawer>
-    ) : isSmall ? (
-        <Drawer
-            variant="permanent"
-            open={open}
-            PaperProps={{
-                className: classes.drawerPaper,
-            }}
-            onClose={toggleSidebar}
-            {...rest}
-        >
-            {cloneElement(Children.only(children), {
-                onMenuClick: handleClose,
-            })}
-        </Drawer>
-    ) : (
+    ) :  (<>
+            <div className={classes.paper}>
+            </div>
         <Drawer
             variant="permanent"
             open={open}
@@ -106,6 +112,7 @@ const Sidebar = props => {
         >
             {children}
         </Drawer>
+        </>
     );
 };
 
