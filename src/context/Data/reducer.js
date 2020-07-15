@@ -12,6 +12,10 @@ import {
     ZALS_DATA_REQUEST,
     ZALS_DATA_SUCCESS,
     ZALS_DATA_ERROR,
+    ACTIVE_ZALS_DATA_REQUEST,
+    ACTIVE_ZALS_DATA_SUCCESS,
+    ACTIVE_ZALS_DATA_ERROR,
+    ONEZAL_DATA_REQUEST,
     FETCH_INTERNET_GROUP_USERS_SUCCESS,
     FETCH_USERS_ALERTS_SUCCESS,
     SET_SEARCH_VALUE,
@@ -24,8 +28,15 @@ import {
     SET_CURRENT_RESOURCE,
     SET_USERS_SECOND_FILTERS,
     SEARCH,
-    SET_SIDEBAR
+    SET_OU_FILTER,
+    CLEAR_PEOPLE_FILTERS,
+    CLEAR_USERS_SECOND_FILTERS,
+    REFRESH_DATA,
+    SET_SIDEBAR,
+    ONEZAL_DATA_ERROR,
+    ONEZAL_DATA_SUCCESS
 } from "./action-types"
+import resourceTypes from "./resource-types"
 
 //******* Initial state ****************//
 export const initialState={
@@ -48,12 +59,12 @@ export const initialState={
     //     }
     // },
     searchValue:'',
+    searchOU:'',
     sortState:{              //Настройки сортировки
         company: true,
         department: true,
+        pager: true,
         cn: true,
-        skype: false,
-        phone: false
     },
     adUsers:{
         requested: false,
@@ -103,7 +114,20 @@ export const initialState={
         progress:100,
         updated: moment('2000-01-01'),
         data:[]
-    },            //Список программ ИВЦ из Sharepoint
+    },            //Список фиксированных залов  из Sharepoint
+    activeZals:{
+        requested: false,
+        loading:false,
+        firstloading:true,
+        data:[]
+    },            //Список фиксированных залов  из Sharepoint
+    oneZal: {
+        requestId:'',
+        loading:false,
+        firstloading:true,
+        errLoading: false,
+        data:[]
+    },
     filtredSoft:[],         //Список программ ИВЦ из Sharepoint  отфильтрованный
     internetUsers:[],       //Список предупреждений пользователей
     userAlerts:[],          //Список предупреждений пользователей
@@ -116,6 +140,10 @@ export const reducer = (state, action) => {
             return {...state, currentResource:action.payload}
         case SEARCH:
             return {...state, search:action.payload}
+        case SET_OU_FILTER:
+            return {...state, searchOU:action.payload}
+        case CLEAR_PEOPLE_FILTERS:
+            return {...state, searchOU:'', searchValue:''}
         case PEOPLES_DATA_REQUEST:
             return {...state, adUsers:{...state.adUsers, requested: true, loading:true, progress:0 }}
         case PEOPLES_DATA_LOADING_PROGRESS:
@@ -138,14 +166,47 @@ export const reducer = (state, action) => {
             return {...state, zals:{...state.zals,data: action.payload, requested: false, loaded:true,loading:false, updated:moment() }}
         case ZALS_DATA_ERROR:
             return {...state, zals:{...state.zals,requested: false, loading:false }}
+        case ACTIVE_ZALS_DATA_REQUEST:
+            return {...state, activeZals:{...state.activeZals, requested: true, loading:true, }}
+        case ACTIVE_ZALS_DATA_SUCCESS:
+            return {...state, activeZals:{...state.activeZals,data: action.payload, requested: false, loaded:true,loading:false }}
+        case ACTIVE_ZALS_DATA_ERROR:
+            return {...state, activeZals:{...state.activeZals,requested: false, loading:false }}
+        case ONEZAL_DATA_REQUEST:
+            return {...state, oneZal:{...state.oneZal,requestId: action.payload, loading:true, errLoading:false}}
+        case ONEZAL_DATA_SUCCESS:
+            return {...state, oneZal:{requestId:'',data: action.payload, loading:false,firstloading:false, errLoading:false }}
+        case ONEZAL_DATA_ERROR:
+            return {...state, oneZal:{...state.oneZal,requestId:'',data: [], loading:false,firstloading:false, errLoading:true }}
         // case SET_LOADING_PROGRESS:
         //     return {...state, loadingProgress:  action.payload}
         case SET_USERS_SECOND_FILTERS:
             const newSecondFilters={...state.adUsers.secondFilters}
             newSecondFilters[action.payload.filter]={...newSecondFilters[action.payload.filter], value:action.payload.value}
             return {...state, adUsers:{...state.adUsers, secondFilters: newSecondFilters}}
+        case CLEAR_USERS_SECOND_FILTERS:
+            return {...state, adUsers:{...state.adUsers, secondFilters: initialState.adUsers.secondFilters}}
         case SET_SIDEBAR:
             return {...state, sidebarOpen:  action.payload}
+        case REFRESH_DATA:
+            console.log('-state.currentResource-',state.currentResource)
+
+            switch (state.currentResource) {
+                case resourceTypes.PEOPLES :
+                    return {...state, adUsers:{...state.adUsers, requested: true, loading:true, progress:0 }}
+                case resourceTypes.STRUCTURE :
+                    return {...state, adUsers:{...state.adUsers, requested: true, loading:true, progress:0 }}
+                case resourceTypes.SOFT :
+                    return {...state, software:{...state.software, requested: true, loading:true, progress:0 }}
+                case resourceTypes.ZALS :
+                    return {...state, zals:{...state.zals, requested: true, loading:true, }}
+                case resourceTypes.ACTIVEZALS :
+                    return {...state, activeZals:{...state.activeZals, requested: true, loading:true, }}
+                case resourceTypes.ONEZAL :
+                    return {...state, oneZal:{...initialState.oneZal }}
+                default:
+                    return {...state}
+            }
         // case FETCH_DATA_SUCCESS:
         //     return {...state,
         //         fetchDataRequest: false,

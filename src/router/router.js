@@ -11,13 +11,22 @@ const Router = (props)=> {
     return (
         <Switch>
             {routesWithLayout.map(child => (
-                <Route
+                child.component && <Route
+                        exact
+                        key={child.name}
+                        path={`/${child.path}`}
+                        render={() => createElement(child.component)}
+                    />
+            ))}
+            {routesWithLayout.map(child => (
+                child.edit && <Route
                     exact
                     key={child.name}
-                    path={`/${child.path}`}
-                    render={() => createElement(child.component)}
+                    path={`/${child.path}/:id`}
+                    render={(props) => createElement(child.edit, props)}
                 />
             ))}
+
             {/*<Route path="/soft">*/}
             {/*    <First />*/}
             {/*</Route>*/}

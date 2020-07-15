@@ -8,10 +8,11 @@ const useStyles = makeStyles(theme => ({
     avatar: {
         width:'60px',
         height:'60px',
+        backgroundColor:'#a7ecac'
     },
 }));
 
-const ZalsLayout=(props)=>{
+const ActiveZalsLayout=(props)=>{
     const classes = useStyles();
     const history=useHistory()
     const {values} =props
@@ -25,22 +26,22 @@ const ZalsLayout=(props)=>{
         return (
             <ListItemPrimaryText
                 className={classes.title}
-                onClick={handleTitleClick(item.confId)}
-                text={item.title}/>
+                onClick={handleTitleClick(item.id)}
+                text={item.title || item.id}/>
         )
     }
-    const secondaryText=item=><a href={item.url} target="_blank" rel="noopener noreferrer" >войти</a>
+    const secondaryText=item=>`участников: ${item.users}`
     const leftAvatar=()=> <img src={MeetingIcon} alt="meeting" title="meeting" style={{width: '40px'}}/>
 
     return (
-            <ListItems
-                classAvatarName={classes.avatar}
-                data={values}
-                leftAvatar={leftAvatar}
-                primaryText={primaryText}
-                secondaryText={secondaryText}
-            />
+        <ListItems
+            classAvatarName={classes.avatar}
+            data={values}
+            leftAvatar={leftAvatar}
+            primaryText={primaryText}
+            secondaryText={secondaryText}
+        />
     );
 }
 
-export default ZalsLayout
+export default ActiveZalsLayout

@@ -38,7 +38,6 @@ const useStyles = makeStyles(
 
 const ListTitle = props => {
     const {
-        classes: classesOverride,
         title,
         count
       } = props;
@@ -59,7 +58,6 @@ const ListTitle = props => {
         </Box>
     );
 };
-
 
 
 export default ListTitle;

@@ -6,7 +6,7 @@ import { DataProvider } from './context/Data'
 import Router from './router'
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import {Footer} from './components/layout'
+//import {Footer} from './components/layout'
 import SignInDialog from './components/dialogs/SignInDialog'
 import 'typeface-roboto';
 import './App.css';

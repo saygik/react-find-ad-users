@@ -49,6 +49,7 @@ const Menu = props => {
     });
     useEffect(()=>{
         resources.filter(r => r.submenu).map(resource=>state[resource.name]=resource.open || false)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
     const handleToggle = (menu) => {
         // console.log('-menu-',menu)
@@ -57,8 +58,8 @@ const Menu = props => {
     };
 //    const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
 //    const open = useSelector((state: ReduxState) => state.admin.ui.sidebarOpen);
-    const { selectors, actions } = useData()
-    const { sidebarOpen: open } = selectors
+    const { selectors:{sidebarOpen:open} } = useData()
+//    const { sidebarOpen: open } = selectors
 //    console.log('-resources-',resources)
 
     // Used to force redraw on navigation

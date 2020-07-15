@@ -46,7 +46,7 @@ function goBack() {
 }
 
 const NotFound = props => {
-    const { className, classes: classesOverride, title} = props;
+    const { className } = props;
     const classes = useStyles(props);
 //    useAuthenticated();
     return (

@@ -23,7 +23,9 @@ const Peoples = () => {
 
     const {searchValues, software, filtredSoft,  searching } = selectors
 
-    useEffect(()=> setCurrentResource(resourceTypes.SOFT),[])
+    useEffect(()=> setCurrentResource(resourceTypes.SOFT),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [])
 
     return (
         <>

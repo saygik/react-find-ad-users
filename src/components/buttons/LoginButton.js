@@ -38,6 +38,7 @@ const LoginButton = (props) => {
             event.preventDefault();
             actions.signIn()
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [actions.signIn]
     );
     return (

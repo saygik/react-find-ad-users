@@ -29,6 +29,7 @@ const UserSettingsMenuItem=React.forwardRef((props,ref)=> {
     const {actions}= useAuth()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleClick = useCallback(() => {},
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [actions.signOut]);
     return (
         <MenuItem

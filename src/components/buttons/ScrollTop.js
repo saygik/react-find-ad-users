@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react'
 import {IconButton, } from "@material-ui/core"
 import NavigationOutlinedIcon from '@material-ui/icons/NavigationOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -43,11 +43,13 @@ const ScrollTop = () =>{
     };
 
     const scrollTop = () =>{
-        console.log('-TOP-',)
         window.scrollTo({top: 0, behavior: 'smooth'});
     };
-
-    window.addEventListener('scroll', checkScrollTop)
+    useEffect(()=>{
+        window.addEventListener('scroll', checkScrollTop)
+        return window.removeEventListener('scroll', checkScrollTop);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        },[])
 
     return (
         <Tooltip title="Наверх">

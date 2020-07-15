@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { makeStyles, } from '@material-ui/core/styles'
 
 import Bar from "./Bar"
-import {Footer} from "./"
+//import {Footer} from "./"
 import DefaultSidebar from './Sidebar';
 import DefaultMenu from './Menu';
 

@@ -39,6 +39,7 @@ const RefreshIconButton = (props) => {
                 onClick(event);
             }
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [actions.refresh, onClick]
     );
     return (

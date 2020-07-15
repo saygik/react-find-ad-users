@@ -3,9 +3,6 @@ import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import RefreshIconButton from '../buttons/RefreshIconButton';
-import {useData} from "../../context/Data"
-
-// import { useRefreshWhenVisible } from 'ra-core';
 
 const useStyles = makeStyles(
     {
@@ -13,12 +10,10 @@ const useStyles = makeStyles(
             margin: 14,
         },
     },
-    { name: 'RaLoadingIndicator' }
+    { name: 'LoadingIndicator' }
 );
 const LoadingIndicator = props => {
-    const { classes: classesOverride, className, ...rest } = props;
-    const { selectors  } = useData()
-    const { loading } = selectors
+    const { classes: classesOverride, className, loading, ...rest } = props;
     const classes = useStyles(props);
     return loading ? (
         <CircularProgress

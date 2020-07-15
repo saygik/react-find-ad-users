@@ -2,8 +2,8 @@ import axios from 'axios'
 import {avatarColors} from './services'
 axios.defaults.timeout = 30000
 
-const _apiBase = 'http://vm-say-work.brnv.rw:9003'
-//const _apiBase = 'http://ad-users.brnv.rw'
+//const _apiBase = 'http://vm-say-work.brnv.rw:9003'
+const _apiBase = 'http://ad-users.brnv.rw'
 //const _apiBase = 'http://find-api.brnvrw.by'
 const api = {};
 api.getAdUser=(setProgress)=>{
@@ -128,6 +128,56 @@ api.getZals=()=>{
         axios({
             method: 'get',
             url: _apiBase+'/zals',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then((response)=> {
+                if (response.data) {
+                    resolve(response.data)
+                }
+                else {
+                    console.log('-response-','NO DATA')
+                    resolve([]);
+                }
+            })
+            .catch( (error) => {
+                // handle error
+                console.log('--ERROR--',error);
+                resolve([]);
+            })
+    });
+}
+api.getActiveZals=()=>{
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'get',
+            url: _apiBase+'/skype/activeconf',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then((response)=> {
+                if (response.data) {
+                    resolve(response.data)
+                }
+                else {
+                    console.log('-response-','NO DATA')
+                    resolve([]);
+                }
+            })
+            .catch( (error) => {
+                // handle error
+                console.log('--ERROR--',error);
+                resolve([]);
+            })
+    });
+}
+api.getConfCurrentUsers=(confIf)=>{
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'get',
+            url: _apiBase+'/skype/conf/'+confIf,
             headers: {
                 'Content-Type': 'application/json'
             },

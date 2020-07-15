@@ -3,8 +3,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import HighlightOffOutlinedIcon from '@material-ui/icons/HighlightOffOutlined';
 import {makeStyles} from "@material-ui/core/styles"
-import {IconButton} from "@material-ui/core"
-import Tooltip from "@material-ui/core/Tooltip/Tooltip"
 import {useCallback} from "react"
 
 const useStyles = makeStyles(
@@ -54,6 +52,7 @@ const RadioButtonGroupInputItem = ({
     const handleClick=useCallback( (newvalue)=>(event)=>{
         event.stopPropagation();
         onChange({filter:source,value:newvalue})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
     return (
         <div className={classes.root} onClick={handleClick(value)}>

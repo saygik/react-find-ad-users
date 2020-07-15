@@ -18,7 +18,6 @@ const useStyles = makeStyles(
 
 const ListTitleSimple = props => {
     const {
-        classes: classesOverride,
         title
     } = props;
     const classes = useStyles(props);

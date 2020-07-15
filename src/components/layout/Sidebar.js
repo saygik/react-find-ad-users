@@ -42,7 +42,7 @@ const useStyles = makeStyles(
             zIndex: 'inherit',
         },
     }),
-    { name: 'RaSidebar' }
+    { name: 'Sidebar' }
 );
 
 const Sidebar = props => {

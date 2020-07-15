@@ -72,8 +72,7 @@ const useStyles = makeStyles(theme => ({
 function MenuAppBarContainer() {
     const classes = useStyles();
     const {signedIn}= useAuth()
-    const { selectors, actions } = useData()
-    const { sidebarOpen: open } = selectors
+    const { selectors: {loading, sidebarOpen: open}, actions } = useData()
 
 
     // const [expanded, setExpanded] = React.useState(false)
@@ -118,7 +117,7 @@ function MenuAppBarContainer() {
                     СПРАВКА НОД-2
                 </Box>
 
-                <LoadingIndicator />
+                <LoadingIndicator loading={loading} />
                 {signedIn ? <UserMenu/> : <LoginButton/> }
             </Toolbar>
             {/*<FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'}*/}

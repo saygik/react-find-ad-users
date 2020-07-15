@@ -10,11 +10,9 @@ import {grey} from '@material-ui/core/colors'
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Box from "@material-ui/core/Box"
-import Link from "@material-ui/core/Link"
-import TextHighlighter from "../TextHighlighter"
 import ActionsPanel from './Panels/ActionsPanel/ActionsPanel'
 import ContentPanel from './Panels/ContentPanel/ContentPanel'
-import SubHeaderPanel from './Panels/SubHeaderPanel/SubHeaderPanel'
+import {UserListItemText} from "../layout"
 
 
 const useStyles = makeStyles(theme => ({
@@ -79,13 +77,18 @@ const useStyles = makeStyles(theme => ({
                         </IconButton>
                 }
                 title={
-                    <Box letterSpacing={3} className={classes.fio}>
-                        <Link href="#" onClick={handleSelectUser} color="inherit">
-                            <TextHighlighter searchValue={searchValue} text={user.cn}  />
-                        </Link>
-                    </Box>
+                    <UserListItemText
+                        highlightText={searchValue}
+                        user={
+                            {
+                                name:user.cn,
+                                mail:user.mail,
+                                company:user.company,
+                                department:user.department,
+                                title: user.title
+                            }
+                        }/>
                 }
-                subheader={<SubHeaderPanel user={user} searchValue={searchValue}/>}
             />
 
             <CardContent style={{padding:'0px'}}>
