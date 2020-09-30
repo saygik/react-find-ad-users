@@ -118,7 +118,7 @@ function MenuAppBarContainer() {
                 </Box>
 
                 <LoadingIndicator loading={loading} />
-                {signedIn ? <UserMenu/> : <LoginButton/> }
+                {signedIn ? <UserMenu /> : <LoginButton/> }
             </Toolbar>
             {/*<FilterProgress value={0} variant={loading ? 'indeterminate' : 'determinate'}*/}
             {/*                style={{marginTop: '2px', height: 3}}/>*/}

@@ -4,7 +4,7 @@ import InfiniteScroll from "react-infinite-scroller"
 
 let page=0
 const SoftCards = (props) => {
-    const {software,searchValues,  findAndSelectUser}=props
+    const {software,searchValues}=props
     const [showedSoft,setShowedSoft]=useState([])         //Показанные на экране пользователи
 
     const getNewSoft=()=>{
@@ -33,7 +33,6 @@ const SoftCards = (props) => {
                                                  software={soft}
                                                  index={index}
                                                  searchValues={searchValues}
-                                                 findAndSelectUser={findAndSelectUser}
         />)}
     </InfiniteScroll>
 

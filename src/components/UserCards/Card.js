@@ -1,15 +1,12 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
+import {CardHeader, CardContent, CardActions, Avatar, IconButton, Box, Card} from '@material-ui/core';
 import {grey} from '@material-ui/core/colors'
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import Box from "@material-ui/core/Box"
+import CloseIcon from '@material-ui/icons/Close';
+// import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import ActionsPanel from './Panels/ActionsPanel/ActionsPanel'
 import ContentPanel from './Panels/ContentPanel/ContentPanel'
 import {UserListItemText} from "../layout"
@@ -47,41 +44,46 @@ const useStyles = makeStyles(theme => ({
     number:{
         margin:'5px',
     },
-
+    withoutnumber:{
+        marginTop:'20px'
+    }
 }));
 
  function UserCard(props) {
     const classes = useStyles();
-    const {user,index, searchValue, selectUser }=props
-    const handleSelectUser = event => {
-         event.preventDefault();
-         selectUser(user)
-     }
+    const {user,index, searchValue }=props
+    const history=useHistory()
+
      if (!user) return ''
+     const isOneCard=!index && index!==0
     return (
         <Card className={classes.root}>
-            <Box component={'div'} className={classes.number}>
-                {index+1}
+            <Box component={'div'} className={isOneCard  ? classes.withoutnumber: classes.number }>
+                {!isOneCard && index+1}
             </Box>
-
             <CardHeader
-                style={{paddingTop: '0px', paddingBottom: '3px',marginTop: '-10px'}}
+                style={{paddingTop: '0px', paddingBottom: '10px',marginTop: '-10px'}}
                 avatar={<><Avatar aria-label="recipe" className={classes.avatar} style={{ backgroundColor: user.avatarcolor,}}>
                     <AccountCircleIcon className={classes.avatarIcon}/>
                 </Avatar>
                 </>
                 }
-                action={
-                        <IconButton aria-label="settings" onClick={handleSelectUser}>
-                            <MoreVertIcon />
-                        </IconButton>
+                action={ !isOneCard
+                    ?
+                    <IconButton aria-label="settings" onClick={()=>history.push('/peoples/'+user.mail+'/')}    >
+                        <MoreVertIcon />
+                    </IconButton>
+                    :
+                    <IconButton aria-label="settings" onClick={()=>history.goBack()} >
+                        <CloseIcon />
+                    </IconButton>
                 }
                 title={
                     <UserListItemText
                         highlightText={searchValue}
                         user={
                             {
-                                name:user.cn,
+                                name:isOneCard ? ' ' : user.cn,
                                 mail:user.mail,
                                 company:user.company,
                                 department:user.department,

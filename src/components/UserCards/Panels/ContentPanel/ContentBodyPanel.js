@@ -35,9 +35,11 @@ const ContentBodyPanel = ({user,searchValue}) => {
             alignItems="flex-start"
             className={classes.root}
         >
-            <GridLine caption={'присутствие:'} property={user.availability.presence} >
+            {user.availability &&
+            <GridLine caption={'присутствие:'} property={user.availability.presence}>
                 {presenceTimeFormat(user.availability)}
             </GridLine>
+            }
             {user.ip &&
             <GridLine caption={'ip адрес: '} property={user.ip} >
                 {user.ip}

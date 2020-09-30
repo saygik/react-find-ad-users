@@ -1,4 +1,5 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom';
 import {makeStyles} from "@material-ui/core/styles"
 import {grey} from "@material-ui/core/colors"
 import Card from "@material-ui/core/Card"
@@ -71,16 +72,16 @@ const useStyles = makeStyles(theme => ({
 
 function SoftCard(props) {
     const classes = useStyles();
-    const {software,index, searchValues,findAndSelectUser}=props
-
+    const {software,index, searchValues}=props
+    const history=useHistory()
     // const handleSelectSoft = event => {
     //     event.preventDefault();
     //
     // }
-    const handleSelectUser=(user)  => {
-        findAndSelectUser(user)
+    const handleSelectUser=(user)=>()=> {
+        history.push('/peoples/'+user.mail+'/')
     }
-    const handleSelectDoc=(doc)  => {
+    const handleSelectDoc=(doc)=>()=> {
         const win = window.open(doc.link, '_blank');
         if (win != null) { win.focus(); }
     }

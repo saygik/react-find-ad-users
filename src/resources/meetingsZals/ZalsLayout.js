@@ -17,7 +17,8 @@ const ZalsLayout=(props)=>{
     const {values} =props
 
     const handleTitleClick=useCallback((zal)=>()=>{
-        history.push('/zals/'+zal)
+        history.push('/zals/'+zal+'/')
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 

@@ -1,3 +1,4 @@
 import avatarColors from './avatarColors'
 import presenceTimeFormat from './presenceTimeFormat'
-export {avatarColors, presenceTimeFormat}
+import today from './today'
+export {avatarColors, presenceTimeFormat, today}

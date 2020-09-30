@@ -1,6 +1,7 @@
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import {BrowserRouter} from "react-router-dom"
+
 import { AuthProvider } from './context/Auth'
 import { DataProvider } from './context/Data'
 import Router from './router'

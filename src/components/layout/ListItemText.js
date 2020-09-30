@@ -13,6 +13,13 @@ const useStyles = makeStyles(
             fontWeight: 500,
             textAlign:'left',
         },
+        link : {
+            cursor:'pointer',
+            "&:hover": {
+                color: 'rgba(26,28,254,0.87)',
+                textDecoration: 'underline'
+            }
+        }
     }),
     { name: 'ListItemText' }
 );
@@ -41,9 +48,9 @@ const ListItemText = props => {
              className={classnames(classes.root, className)}
         >
             {onClick
-                    ? <Link href="#" onClick={onClick} color="inherit">
+                    ? <Box onClick={onClick} color="inherit" className={classnames(classes.link, className)}>
                             <TextHighlight text={text} highlightText={highlightText}/>
-                      </Link>
+                      </Box>
                     : <TextHighlight text={text} highlightText={highlightText}/>
             }
         </Box>

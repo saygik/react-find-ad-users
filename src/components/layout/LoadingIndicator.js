@@ -7,7 +7,7 @@ import RefreshIconButton from '../buttons/RefreshIconButton';
 const useStyles = makeStyles(
     {
         loader: {
-            margin: 14,
+            margin: 0,
         },
     },
     { name: 'LoadingIndicator' }

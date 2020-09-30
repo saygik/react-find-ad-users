@@ -43,7 +43,7 @@ const OneZal = (props) => {
         setCurrentResource(resourceTypes.ONEZAL,{id:props.match.params.id})
         let timer1 = setInterval(() => setRequestData(true), 5000)
         return () => {
-            console.log('-clear onezal-',)
+//            console.log('-clear onezal-',)
             refreshData()
             clearInterval(timer1)
         }},
@@ -81,7 +81,7 @@ const OneZal = (props) => {
     return (
         <div>
             <ListTitle
-                title={title}
+                title={title || currentId}
                 count= {
                     oneZal.data.length>0
                         ? `участников: ${oneZal.data.length}`

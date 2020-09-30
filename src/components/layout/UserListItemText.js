@@ -1,4 +1,3 @@
-
 import React  from 'react'
 import  ListItemText from "./ListItemText"
 import {makeStyles} from "@material-ui/core/styles"
@@ -47,7 +46,7 @@ const UserListItemText = ({user, highlightText}) => {
             <ListItemText
                 className={classes.title}
                 highlightText={highlightText}
-                onClick={()=>history.push('/peoples/'+mail)}
+                onClick={()=>history.push('/peoples/'+mail+'/')}
                 text={name || mail}
             />
             <ListItemText

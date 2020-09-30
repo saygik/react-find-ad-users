@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ListItemIcon, MenuItem, makeStyles } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 import classnames from 'classnames';
@@ -23,12 +24,17 @@ const UserSettingsMenuItem=React.forwardRef((props,ref)=> {
         className,
         classes: classesOverride,
         icon,
+        onLeaveMenu,
         ...rest
     } = props;
     const classes = useStyles(props);
-    const {actions}= useAuth()
+    const {user,actions}= useAuth()
+    const history=useHistory()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const handleClick = useCallback(() => {},
+    const handleClick = useCallback(() => {
+            onLeaveMenu()
+            history.push('/peoples/'+user.email+'/')
+        },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [actions.signOut]);
     return (
@@ -41,7 +47,7 @@ const UserSettingsMenuItem=React.forwardRef((props,ref)=> {
             <ListItemIcon className={classes.icon}>
                 {icon ? icon : <SettingsIcon />}
             </ListItemIcon>
-            {'Настройки'}
+            {'Кабинет'}
         </MenuItem>
     );
 })

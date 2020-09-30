@@ -189,7 +189,7 @@ export const reducer = (state, action) => {
         case SET_SIDEBAR:
             return {...state, sidebarOpen:  action.payload}
         case REFRESH_DATA:
-            console.log('-state.currentResource-',state.currentResource)
+//            console.log('-state.currentResource-',state.currentResource)
 
             switch (state.currentResource) {
                 case resourceTypes.PEOPLES :

@@ -22,7 +22,7 @@ const Router = (props)=> {
                 child.edit && <Route
                     exact
                     key={child.name}
-                    path={`/${child.path}/:id`}
+                    path={`/${child.path}/:id/`}
                     render={(props) => createElement(child.edit, props)}
                 />
             ))}

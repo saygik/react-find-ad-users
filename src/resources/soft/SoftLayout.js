@@ -31,7 +31,6 @@ const SoftLayout=(props)=>{
                         : <SoftCards
                             software={filtredValues}
                             searchValues={searchValues}
-                            findAndSelectUser={()=>{}}
                         />
                     }
                 </Grid>

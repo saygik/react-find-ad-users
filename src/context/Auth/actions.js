@@ -5,7 +5,7 @@ const AD_FIND_USER='AD_FIND_USER'
 const mapDispatch = dispatch => ({
     getAuth: (user, password) =>  new Promise((resolve, reject) => {
         skypeApi.getAuth(user,password).then((user)=>{
-            dispatch({type: SIGN_IN_SUCCESS, payload:user})
+              dispatch({type: SIGN_IN_SUCCESS, payload:user})
             user.token && localStorage.setItem(AD_FIND_USER, user.token);
             return resolve(user)
         }).catch(()=>{

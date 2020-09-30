@@ -13,6 +13,7 @@ const TextHighlighter = ({text,searchValue}) => {
     const classes = useStyles();
     const searchWords=searchValue
     //searchValue && searchWords.push(searchValue)
+    if (!searchWords) return text
     return <Highlighter
         highlightClassName={classes.colorize}
         caseSensitive={false}

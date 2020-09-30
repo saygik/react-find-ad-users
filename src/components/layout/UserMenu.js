@@ -22,8 +22,10 @@ const UserMenu = props => {
     const handleMenu = event => {
         setAnchorEl(event.currentTarget);
     }
-
-    const handleClose = () => setAnchorEl(null);
+    const leaveMenu=()=>{
+        setAnchorEl(null);
+}
+    const handleClose = () => leaveMenu()
     return (
         <div>
             <Tooltip title={menuLabel}>
@@ -54,7 +56,7 @@ const UserMenu = props => {
 
                 <UserTitleMenuItem/>
                 <Divider />
-                <UserSettingsMenuItem/>
+                <UserSettingsMenuItem onLeaveMenu={leaveMenu} />
                 <LogoutButton/>
             </Menu>
         </div>

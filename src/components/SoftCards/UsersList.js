@@ -26,6 +26,13 @@ const useStyles = makeStyles(theme => ({
         textAlign:'left',
         marginLeft:'20px',
     },
+    link : {
+        cursor:'pointer',
+        "&:hover": {
+            color: 'rgba(26,28,254,0.87)',
+            textDecoration: 'underline'
+        }
+    }
 }));
 
 const UsersList = ({caption, list, handleSelect, icon}) => {
@@ -48,9 +55,9 @@ const UsersList = ({caption, list, handleSelect, icon}) => {
                 <Box letterSpacing={3} className={classes.url}>
                     {list.map((item,index)=>{
                         return <Grid item key={index}>
-                            <Link href="#" onClick={()=>handleSelect(item)}>
+                            <Box onClick={handleSelect(item)} className={classes.link}>
                                 {item.name}
-                            </Link>
+                            </Box>
                         </Grid>
                     })}
                 </Box>
