@@ -4,7 +4,7 @@ import moment from 'moment'
 axios.defaults.timeout = 30000
 
 //const _apiBase = 'http://vm-say-work.brnv.rw:9003'
-const _apiBase = 'http://ad-users.brnv.rw'
+const _apiBase = 'https://ad-users.brnv.rw'
 //const _apiBase = 'http://find-api.brnvrw.by'
 const api = {};
 const emptyObject={}
