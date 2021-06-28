@@ -26,7 +26,7 @@ const useStyles = makeStyles(
 
 const RefreshIconButton = (props) => {
     const {label, icon, className, onClick, ...rest} = props
-    const { actions  } = useData()
+    const { actions, mutations:{all:{refresh}} } = useData()
     const buttonLabel=label || defaultLabel
     const buttonIcon=icon || defaultIcon
     const classes = useStyles();
@@ -34,7 +34,7 @@ const RefreshIconButton = (props) => {
     const handleClick = useCallback(
         event => {
             event.preventDefault();
-            actions.refreshData()
+            refresh()
             if (typeof onClick === 'function') {
                 onClick(event);
             }

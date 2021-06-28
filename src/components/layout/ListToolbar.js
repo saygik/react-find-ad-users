@@ -1,13 +1,14 @@
 import * as React from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
+import {Grid} from "@material-ui/core"
 
 const useStyles = makeStyles(
     theme => ({
         toolbar: {
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            paddingRight: 0,
+            paddingRight: 20,
             [theme.breakpoints.up('xs')]: {
                 paddingLeft: 0,
             },
@@ -33,17 +34,14 @@ const useStyles = makeStyles(
             },
         },
     }),
-    { name: 'RaListToolbar' }
+    { name: 'SAYListToolbar' }
 );
 
 const ListToolbar = props => {
     const {
         classes: classesOverride,
-        filters,
-        filterValues, // dynamically set via the UI by the user
-        permanentFilter, // set in the List component by the developer
         actions,
-        exporter,
+        filters,
         ...rest
     } = props;
     const classes = useStyles(props);
@@ -52,19 +50,14 @@ const ListToolbar = props => {
             {filters &&
             React.cloneElement(filters, {
                 ...rest,
-                className: classes.filters,
-                filterValues,
-                context: 'form',
+                className: classes.actions,
+                ...filters.props,
             })}
             <span />
             {actions &&
             React.cloneElement(actions, {
                 ...rest,
                 className: classes.actions,
-                exporter, // deprecated, use ExporterContext instead
-                filters,
-                filterValues,
-                permanentFilter,
                 ...actions.props,
             })}
         </Toolbar>
@@ -73,4 +66,4 @@ const ListToolbar = props => {
 
 
 
-export default React.memo(ListToolbar);
+export default ListToolbar;

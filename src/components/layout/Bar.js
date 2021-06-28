@@ -13,13 +13,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import classNames from 'classnames';
 import {useData} from "../../context/Data"
 import {useAuth} from '../../context/Auth'
+import {useSSPstatus} from '../../context/Data'
 import {LoadingIndicator, UserMenu} from "./"
-import {LoginButton} from "../buttons"
+import {LoginButton, LedBlinked} from "../buttons"
 
 const useStyles = makeStyles(theme => ({
     root: {
-        marginBottom:'5px'
-
+        backgroundColor: theme.palette.primary.dark
     },
     title: {
         flex: 1,
@@ -72,13 +72,14 @@ const useStyles = makeStyles(theme => ({
 function MenuAppBarContainer() {
     const classes = useStyles();
     const {signedIn}= useAuth()
+    const sspConnectionStatus = useSSPstatus()
     const { selectors: {loading, sidebarOpen: open}, actions } = useData()
 
 
     // const [expanded, setExpanded] = React.useState(false)
     const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
-    return <div className={classes.root}>
-        <AppBar position="fixed"      >
+    return <>
+        <AppBar position="fixed"    className={classNames(classes.root)}>
             <Toolbar
                 disableGutters
                 variant={isXSmall ? 'regular' : 'dense'}
@@ -114,9 +115,9 @@ function MenuAppBarContainer() {
                 />
                 {/*<MenuAppDrawer />*/}
                 <Box letterSpacing={3} className={classes.titleCaption}>
-                    СПРАВКА НОД-2
+                    ССП клиент
                 </Box>
-
+                <LedBlinked disabled={sspConnectionStatus && signedIn}/>
                 <LoadingIndicator loading={loading} />
                 {signedIn ? <UserMenu /> : <LoginButton/> }
             </Toolbar>
@@ -125,7 +126,7 @@ function MenuAppBarContainer() {
             {/*<FilterBar expanded={expanded} setExpanded={setExpanded}/>*/}
         </AppBar>
 
-    </div>
+    </>
 }
 
 

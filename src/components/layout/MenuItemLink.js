@@ -21,7 +21,7 @@ const useStyles = makeStyles(
             color: theme.palette.text.secondary,
         },
         active: {
-            color: theme.palette.text.primary,
+            color: theme.palette.secondary.light,
         },
         icon: { minWidth: theme.spacing(5) },
     }),
@@ -78,6 +78,5 @@ const MenuItemLink= forwardRef((props, ref) => {
         </Tooltip>
     );
 });
-
 
 export default MenuItemLink;

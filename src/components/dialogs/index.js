@@ -1,2 +1,10 @@
 import SignInDialog from './SignInDialog'
-export default SignInDialog
+import NewMessageDialog from './NewMessageDialog'
+import MessageDialog from './MessageDialog'
+import NewTemplateDialog from "./NewTemplateDialog"
+export {
+    SignInDialog,
+    NewMessageDialog,
+    MessageDialog,
+    NewTemplateDialog
+}

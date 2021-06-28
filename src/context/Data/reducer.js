@@ -1,252 +1,86 @@
-import moment from 'moment'
-import {
-
-    PEOPLES_DATA_REQUEST,
-    PEOPLES_DATA_LOADING_PROGRESS,
-    PEOPLES_DATA_ERROR,
-    PEOPLES_DATA_SUCCESS,
-    SOFT_DATA_REQUEST,
-    SOFT_DATA_LOADING_PROGRESS,
-    SOFT_DATA_SUCCESS,
-    SOFT_DATA_ERROR,
-    ZALS_DATA_REQUEST,
-    ZALS_DATA_SUCCESS,
-    ZALS_DATA_ERROR,
-    ACTIVE_ZALS_DATA_REQUEST,
-    ACTIVE_ZALS_DATA_SUCCESS,
-    ACTIVE_ZALS_DATA_ERROR,
-    ONEZAL_DATA_REQUEST,
-    FETCH_INTERNET_GROUP_USERS_SUCCESS,
-    FETCH_USERS_ALERTS_SUCCESS,
-    SET_SEARCH_VALUE,
-    SET_SOFT_FILTRED,
-    SET_SORT_STATE,
-    SET_SEARCHING,
-    SET_NO_SEARCHING,
-    SET_USERS_FILTRED,
-    SET_SELECTED_USER,
-    SET_CURRENT_RESOURCE,
-    SET_USERS_SECOND_FILTERS,
-    SEARCH,
-    SET_OU_FILTER,
-    CLEAR_PEOPLE_FILTERS,
-    CLEAR_USERS_SECOND_FILTERS,
-    REFRESH_DATA,
-    SET_SIDEBAR,
-    ONEZAL_DATA_ERROR,
-    ONEZAL_DATA_SUCCESS
-} from "./action-types"
-import resourceTypes from "./resource-types"
+import types from './action-types'
 
 //******* Initial state ****************//
 export const initialState={
     loading: false,
     loaded: false,
-    search: false,
-    searching: false,
+    // messages:[],
+    // requests:[],
+    // messageTemplates:[],
+    logs:[],
     sidebarOpen:true,
-    fetchDataRequest:false,
-    // loadingProgress:{       // Прогресс загрузки списков
-    //     peoples:{
-    //         loaded:false,
-    //         loading:false,
-    //         progress:100
-    //     },
-    //     soft:{
-    //         loaded:false,
-    //         loading:false,
-    //         progress:100
-    //     }
-    // },
-    searchValue:'',
-    searchOU:'',
-    sortState:{              //Настройки сортировки
-        company: true,
-        department: true,
-        pager: true,
-        cn: true,
+    currentResource: '',
+    newMessageDialogOpened: false,
+    messageDialogOpen: false,
+    templateDialogOpen: false,
+    selectedMessages:[],
+    responseMessagesIds: [],
+    selectedTemplate: {},
+    newMessageFromTemplate:'',
+    templateCategorySelectorValue: 0,
+    templateFilterValue: '*',
+    selectedMessage: null,
+    awaitingMessage:'',
+    ssp: {
+        connected: false,
     },
-    adUsers:{
-        requested: false,
-        loading:false,
-        loaded:false,
-        progress:100,
-        updated: moment('2000-01-01'),
-        filters:[
-            'cn',
-            'title',
-            'company',
-            'department',
-            'url',
-            'mail',
-            'telephoneNumber'
-        ],
-        secondFilters:{
-            sip:{
-                name:'Skype для бизнеса',
-                value:''
-            },
-            telephoneNumber:{
-                name:'Рабочий телефон',
-                value:''
-            },
-            internet:{
-                name:'Интернет',
-                value:''
-            },
-        },
-        data:[]
-    },             //Список пользователей из AD
-    adFiltredUsers:[],      //Список пользователей из AD отфильтрованный
-    selectedUser: {},
-    software:{
-        requested: false,
-        loading:false,
-        loaded:false,
-        progress:100,
-        updated: moment('2000-01-01'),
-        data:[]
-    },            //Список программ ИВЦ из Sharepoint
-    zals:{
-        requested: false,
-        loading:false,
-        loaded:false,
-        progress:100,
-        updated: moment('2000-01-01'),
-        data:[]
-    },            //Список фиксированных залов  из Sharepoint
-    activeZals:{
-        requested: false,
-        loading:false,
-        firstloading:true,
-        data:[]
-    },            //Список фиксированных залов  из Sharepoint
-    oneZal: {
-        requestId:'',
-        loading:false,
-        firstloading:true,
-        errLoading: false,
-        data:[]
-    },
-    filtredSoft:[],         //Список программ ИВЦ из Sharepoint  отфильтрованный
-    internetUsers:[],       //Список предупреждений пользователей
-    userAlerts:[],          //Список предупреждений пользователей
-    currentResource: ''
 }
 //    ..const [selectedUser, setSelectedUser] = React.useState({});
 export const reducer = (state, action) => {
     switch (action.type) {
-        case SET_CURRENT_RESOURCE:
+        // case MESSAGES_REQUEST:
+        //     return {...state, loading: true}
+        // case MESSAGES_ERROR:
+        //     return {...state, messages:[],  loading: false}
+        // case MESSAGES_SUCCESS:
+        //     return {...state, messages: action.payload,  loading: false}
+        case types.NEW_MESSAGE_DIALOG_OPEN:
+            return {...state, newMessageDialogOpened: true, newMessageFromTemplate:action.payload}
+        case types.NEW_MESSAGE_DIALOG_CLOSE:
+            return {...state, newMessageDialogOpened: false, newMessageFromTemplate: ''}
+        case types.TEMPLATE_DIALOG_OPEN:
+            return {...state, templateDialogOpen: true, selectedTemplate: action.payload || {}}
+        case types.TEMPLATE_DIALOG_CLOSE:
+            return {...state, templateDialogOpen: false, selectedTemplate: {}}
+        case types.TEMPLATE_CATEGORY_SELECTOR_VALUE_CHANGE:
+            return {...state, templateCategorySelectorValue: action.payload.value}
+        case types.TEMPLATE_FILTER_VALUE_CHANGE:
+            return {...state, templateFilterValue: action.payload.value}
+        case types.MESSAGE_DIALOG_OPEN:
+            return {...state, messageDialogOpen: true}
+        case types.SELECT_RESPONSE_MESSAGE_FOR_DIALOG:
+            return {...state, selectedMessage: action.payload}
+        case types.MESSAGE_DIALOG_CLOSE:
+            return {...state, messageDialogOpen: false, selectedMessage:null}
+        case types.SET_CURRENT_RESOURCE:
             return {...state, currentResource:action.payload}
-        case SEARCH:
-            return {...state, search:action.payload}
-        case SET_OU_FILTER:
-            return {...state, searchOU:action.payload}
-        case CLEAR_PEOPLE_FILTERS:
-            return {...state, searchOU:'', searchValue:''}
-        case PEOPLES_DATA_REQUEST:
-            return {...state, adUsers:{...state.adUsers, requested: true, loading:true, progress:0 }}
-        case PEOPLES_DATA_LOADING_PROGRESS:
-            return {...state, adUsers:{...state.adUsers, progress:action.payload }}
-        case PEOPLES_DATA_SUCCESS:
-            return {...state,search:true, adUsers:{...state.adUsers,data: action.payload, requested: false, loaded:true,loading:false, progress:100, updated: moment() }}
-        case PEOPLES_DATA_ERROR:
-            return {...state, adUsers:{...state.adUsers,requested: false, loading:false, progress:100 }}
-        case SOFT_DATA_REQUEST:
-            return {...state, software:{...state.software, requested: true, loading:true, progress:0 }}
-        case SOFT_DATA_LOADING_PROGRESS:
-            return {...state, software:{...state.software, progress:action.payload }}
-        case SOFT_DATA_SUCCESS:
-            return {...state, software:{...state.software,data: action.payload, requested: false, loaded:true,loading:false, progress:100, updated:moment() }}
-        case SOFT_DATA_ERROR:
-            return {...state, software:{...state.software,requested: false, loading:false, progress:100 }}
-        case ZALS_DATA_REQUEST:
-            return {...state, zals:{...state.zals, requested: true, loading:true, }}
-        case ZALS_DATA_SUCCESS:
-            return {...state, zals:{...state.zals,data: action.payload, requested: false, loaded:true,loading:false, updated:moment() }}
-        case ZALS_DATA_ERROR:
-            return {...state, zals:{...state.zals,requested: false, loading:false }}
-        case ACTIVE_ZALS_DATA_REQUEST:
-            return {...state, activeZals:{...state.activeZals, requested: true, loading:true, }}
-        case ACTIVE_ZALS_DATA_SUCCESS:
-            return {...state, activeZals:{...state.activeZals,data: action.payload, requested: false, loaded:true,loading:false }}
-        case ACTIVE_ZALS_DATA_ERROR:
-            return {...state, activeZals:{...state.activeZals,requested: false, loading:false }}
-        case ONEZAL_DATA_REQUEST:
-            return {...state, oneZal:{...state.oneZal,requestId: action.payload, loading:true, errLoading:false}}
-        case ONEZAL_DATA_SUCCESS:
-            return {...state, oneZal:{requestId:'',data: action.payload, loading:false,firstloading:false, errLoading:false }}
-        case ONEZAL_DATA_ERROR:
-            return {...state, oneZal:{...state.oneZal,requestId:'',data: [], loading:false,firstloading:false, errLoading:true }}
-        // case SET_LOADING_PROGRESS:
-        //     return {...state, loadingProgress:  action.payload}
-        case SET_USERS_SECOND_FILTERS:
-            const newSecondFilters={...state.adUsers.secondFilters}
-            newSecondFilters[action.payload.filter]={...newSecondFilters[action.payload.filter], value:action.payload.value}
-            return {...state, adUsers:{...state.adUsers, secondFilters: newSecondFilters}}
-        case CLEAR_USERS_SECOND_FILTERS:
-            return {...state, adUsers:{...state.adUsers, secondFilters: initialState.adUsers.secondFilters}}
-        case SET_SIDEBAR:
+        case types.SET_SIDEBAR:
             return {...state, sidebarOpen:  action.payload}
-        case REFRESH_DATA:
-//            console.log('-state.currentResource-',state.currentResource)
-
-            switch (state.currentResource) {
-                case resourceTypes.PEOPLES :
-                    return {...state, adUsers:{...state.adUsers, requested: true, loading:true, progress:0 }}
-                case resourceTypes.STRUCTURE :
-                    return {...state, adUsers:{...state.adUsers, requested: true, loading:true, progress:0 }}
-                case resourceTypes.SOFT :
-                    return {...state, software:{...state.software, requested: true, loading:true, progress:0 }}
-                case resourceTypes.ZALS :
-                    return {...state, zals:{...state.zals, requested: true, loading:true, }}
-                case resourceTypes.ACTIVEZALS :
-                    return {...state, activeZals:{...state.activeZals, requested: true, loading:true, }}
-                case resourceTypes.ONEZAL :
-                    return {...state, oneZal:{...initialState.oneZal }}
-                default:
-                    return {...state}
-            }
-        // case FETCH_DATA_SUCCESS:
-        //     return {...state,
-        //         fetchDataRequest: false,
-        //         loading: false,
-        //         loaded: true
-        //     }
-        // case FETCH_USERS_SUCCESS:
-        //     return {...state,
-        //         adUsers:  action.payload,
-        //         loadingProgress: {...state.loadingProgress, peoples: {...state.loadingProgress.peoples, loading:false, progress:100}}
-        //     }
-        // case FETCH_SOFT_SUCCESS:
-        //     return {...state,
-        //         software:  action.payload,
-        //         loadingProgress: {...state.loadingProgress, soft: {...state.loadingProgress.peoples, loading:false, progress:100}}
-        //     }
-        case FETCH_INTERNET_GROUP_USERS_SUCCESS:
-            return {...state, internetUsers: action.payload }
-        case FETCH_USERS_ALERTS_SUCCESS:
-            return {...state, userAlerts: action.payload }
-        case SET_SEARCH_VALUE:
-            return {...state, searchValue: action.payload }
-        case SET_SEARCHING:
-            return {...state, searching: true }
-        case SET_NO_SEARCHING:
-            return {...state, searching: false }
-        case SET_SORT_STATE:
-            return {...state, sortState: action.payload }
-        case SET_USERS_FILTRED:
-            return {...state, adFiltredUsers: action.payload }
-        case SET_SOFT_FILTRED:
-            return {...state, filtredSoft: action.payload }
-        case SET_SELECTED_USER:
-            return {...state, selectedUser: action.payload }
-        // case FETCH_DATA_ERROR:
-        //     return {...state,
-        //         fetchDataRequest: false,
-        //         loading: false,
-        //         loaded: false
-        //     }
+        case types.REFRESH_SSP_STATUS:
+      //      console.log('-STATUS-',action.payload.status)
+            return {...state, ssp: {...state.ssp, connected: action.payload.status}}
+        case types.SELECT_RESPONSE_MESSAGE:
+            return {...state, selectedMessages: [...state.selectedMessages, action.payload]}
+        case types.DESELECT_RESPONSE_MESSAGE:
+            return {...state, selectedMessages: state.selectedMessages.filter(item=>item!==action.payload)}
+        case types.SELECT_ALL_RESPONSE_MESSAGES:
+            return {...state, selectedMessages: state.responseMessagesIds}
+        case types.DESELECT_ALL_RESPONSE_MESSAGES:
+            return {...state, selectedMessages: []}
+        case types.UPDATE_ALL_RESPONSE_MESSAGES_IDS:
+            return {...state, responseMessagesIds: action.payload}
+        // case types.UPDATE_REQUEST_MESSAGES:
+        //     return {...state, requests: [...action.payload]}
+        // case types.UPDATE_RESPONSE_MESSAGES:
+        //     return {...state, messages: [...action.payload]}
+        // case types.UPDATE_MESSAGE_TEMPLATES:
+        //     return {...state, messageTemplates: [...action.payload]}
+        // case types.SUBSCRIBED_DATA_LOGS:
+        //     return {...state, logs: [action.payload ,...state.logs]}
+        case types.AWAIT_MESSAGE:
+            return {...state, awaitingMessage: action.payload }
+        case types.AWAITING_MESSAGE_FIND:
+            return {...state, awaitingMessage: '' }
         default:
             return state
     }

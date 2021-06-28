@@ -1,13 +1,10 @@
 import React, {useState, useEffect} from 'react'
 
 import validate from 'validate.js'
-
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-
-import {useSnackbar} from "notistack"
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -42,7 +39,7 @@ const SignInDialog = (props) => {
 
         <Dialog fullWidth maxWidth="sm" {...dialogProps} >
             <DialogTitle>
-                Войти в планировщик
+                Войти в программу
             </DialogTitle>
 
             <DialogContent>
@@ -105,9 +102,9 @@ const SignInDialog = (props) => {
 
 
 const SignInDialogContainer = () => {
-    const {signInDialogOpen, actions}= useAuth()
+    const {signInDialogOpen, actions,getAuth}= useAuth()
     const [state, setState]=useState(initialState)
-    const { enqueueSnackbar } = useSnackbar()
+
 
     const signIn = () => {
         const { emailAddress, password } = state;
@@ -167,21 +164,12 @@ const SignInDialogContainer = () => {
     useEffect(()=> {
 
         if (state.action === ACTION_SIGN_IN) {
-//            console.log('-ACTION_SIGN_IN-',)
-            actions.getAuth(state.emailAddress, state.password)
-                .then((user) => {
-                    enqueueSnackbar(`Вы вошли как  ${user.name || user.email}` , { variant: 'info' })
-                })
-                .catch((reason) => {
-                    enqueueSnackbar('Вход в систему не был произведен: ' + reason, {variant: 'error'})
-                })
-                .finally(() => {
-                    setState({
+            getAuth(state.emailAddress, state.password)
+            setState({
                         ...state,
                         performingAction: false,
                         action: null
                     });
-                });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.action])

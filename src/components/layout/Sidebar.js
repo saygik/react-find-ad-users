@@ -3,7 +3,8 @@ import { Children, cloneElement } from 'react';
 import { Drawer, makeStyles, useMediaQuery } from '@material-ui/core';
 import lodashGet from 'lodash/get';
 import {useData} from "../../context/Data"
-
+import {useAuth} from "../../context/Auth"
+import AddRequestButton from '../buttons/AddRequestButton'
 export const DRAWER_WIDTH = 240;
 export const CLOSED_DRAWER_WIDTH = 55;
 
@@ -28,7 +29,7 @@ const useStyles = makeStyles(
         },
         drawerPaper: {
             position: '-webkit-sticky',
-            height: 'auto',
+            height: '100lv',
             overflowX: 'hidden',
             width: props =>
                 props.open
@@ -42,8 +43,8 @@ const useStyles = makeStyles(
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.leavingScreen,
             }),
-            backgroundColor: 'transparent',
-            paddingTop: '5em',
+            backgroundColor: theme.palette.primary.main,
+            paddingTop: '4em',
             marginTop: '0.5em',
             marginRight: '1em',
             borderRight: 'none',
@@ -72,12 +73,13 @@ const Sidebar = props => {
         ...rest
     } = props;
     const { selectors, actions } = useData()
+    const { signedIn } = useAuth()
     const { sidebarOpen: open } = selectors
     const { setSidebar: setSidebarVisibility } = actions
 
 //    const dispatch = useDispatch();
     const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
-    const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
+//    const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
 //    const open = useSelector(state => state.admin.ui.sidebarOpen);
 //    useSelector(state => state.locale); // force redraw on locale change
     const handleClose = () => setSidebarVisibility(false);
@@ -110,6 +112,7 @@ const Sidebar = props => {
             onClose={toggleSidebar}
             {...rest}
         >
+            <AddRequestButton onClick={actions.newMessageDialogOpen} disabled={!signedIn}/>
             {children}
         </Drawer>
         </>

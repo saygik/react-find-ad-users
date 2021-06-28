@@ -1,227 +1,111 @@
 import axios from 'axios'
-import {avatarColors} from './services'
-import moment from 'moment'
+
 axios.defaults.timeout = 30000
-
-//const _apiBase = 'http://vm-say-work.brnv.rw:9003'
-const _apiBase = 'https://ad-users.brnv.rw'
-//const _apiBase = 'http://find-api.brnvrw.by'
+const _apiBase = 'http://vm-say-work.brnv.rw:9000/v1'
 const api = {};
-const emptyObject={}
+//const emptyObject={}
 
-const normalizeUser=(user)=>{
 
-    if (!user || user===emptyObject ||  Array.isArray(user) ) return emptyObject
-    return {
-        ...user,
-        title: user.title && user.title.toUpperCase(),
-        url: user.url && Array.isArray(user.url) ? user.url.join(', ').toUpperCase(): user.url,
-        avatarcolor:avatarColors(user.availability.presence),
+const apiData = async  (url, token='', method='get', data={}) => {
+    const headers= {'Content-Type': 'application/json',}
+    if (!!token) headers.Authorization='Bearer ' + token
+    return axios({
+        method: method,
+        url: _apiBase + url,
+        headers: headers,
+        data: data
+    })
+}
+
+
+api.getUsers = async ()=>await apiData('/ad/users')
+//api.getSSPStatus = async ()=> await getApiData('/ssp')
+api.getSSPStatus = async () => await apiData('/ssp')
+
+
+api.findUser = async (token) => await apiData('/user/find', token,'post')
+api.getAuth = async (email,password) => await apiData('/user/login', '','post',JSON.stringify({email:email, password:password}))
+
+api.getNewMessages = async (token) => {
+    try {
+        const response = await apiData('/message/responses', token)
+        if (response.data) return response.data.results[0].data
+        else {}
+    } catch (error) {
+        if (error.response.status === 401) throw new Error("401 (Unauthorized)")
+        return error
     }
 }
-const normalizeUsers=(users)=>{
-    return users.map(item=>{
-        return normalizeUser(item)
-    })
-
+api.getDeletedResponses = async (token, cursor=0) => {
+    try {
+        const response = await apiData('/message/responses/deleted?cursor='+cursor, token)
+        console.log('-DELETED-',response.data)
+        if (response.data) return response.data.results[0].data
+        else {}
+    } catch (error) {
+        if (error.response.status === 401) throw new Error("401 (Unauthorized)")
+        return error
+    }
 }
-const formatAlerts=(alerts)=>{
-    return alerts.map(alert=>{
-        return {
-            ...alert,
-            description:`с ${moment(alert.from).format('DD.MM.YYYY')}  по ${moment(alert.to).format('DD.MM.YYYY')}`
-        }
-    })
-
+api.getRequestMessages= async (token, cursor= 0, desc= 'true') => {
+    try {
+        const response = await apiData('/message/request?cursor='+cursor+"&desc=" + desc, token)
+        if (response.data) return response.data.results[0].data
+        else {}
+    } catch (error) {
+        if (error.response.status === 401) throw new Error("401 (Unauthorized)")
+        return error
+    }
 }
-
-const getApiData=(url)=>new Promise((resolve) => {
-    axios({
-        method: 'get',
-        url: _apiBase+url,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    })
-        .then((response)=> {
-            if (response.data) {
-                resolve(response.data)
-            }
-            else {
-                console.log('-response-','NO DATA')
-                resolve([]);
-            }
-        })
-        .catch( (error) => {
-            // handle error
-            console.log('--ERROR--',error);
-            resolve([]);
-        })
-})
-const addApiData=(url,data)=>new Promise((resolve) => {
-//    console.log('-------------',JSON.stringify(data))
-    axios({
-        method: 'post',
-        url: _apiBase+url,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(data)
-    })
-        .then((response)=> {
-            if (response.status===201) {
-                resolve(true)
-            }
-            else {
-                resolve(false);
-            }
-        })
-        .catch( (error) => {
-            // handle error
-            console.log('--ERROR--',error);
-            resolve(false);
-        })
-})
-const delApiData=(url,data)=>new Promise((resolve) => {
-//    console.log('-------------+',JSON.stringify(data))
-    axios({
-        method: 'DELETE',
-        url: _apiBase+url,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(data)
-    })
-        .then((response)=> {
-            if (response.status===200) {
-                resolve(true)
-            }
-            else {
-                resolve(false);
-            }
-        })
-        .catch( (error) => {
-            // handle error
-            console.log('--ERROR--',error);
-            resolve(false);
-        })
-})
-const getApiDataWithProgress=(url, setProgress)=>new Promise((resolve) => {
-    axios({
-        method: 'get',
-        url: _apiBase+url,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        onDownloadProgress: function (progressEvent) {
-            const proc=Number((progressEvent.loaded/progressEvent.total*100).toFixed(1));
-            setProgress(proc)
-        },
-    })
-        .then((response)=> {
-            if (response.data) {
-                resolve(response.data)
-            }
-            else {
-                console.log('-response-','NO DATA')
-                resolve([]);
-            }
-        })
-        .catch( (error) => {
-            // handle error
-            console.log('--ERROR--',error);
-            resolve([]);
-        })
-})
-
-api.getAuth=(user,password)=>{
-    return new Promise((resolve, reject) => {
-        axios({
-            method: 'post',
-            url: _apiBase+'/auth',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify({username:user, password:password})
-        })
-            .then((response)=> {
-                if (response.data.status==="success") {
-                    resolve({
-                        name: response.data.data.user.cn,
-                        email: response.data.data.user.userPrincipalName,
-                        admin:response.data.data.user.admin || false,
-                        token: response.data.token
-                    })
-                }
-                else {
-                    reject();
-                }
-            })
-            .catch( (error) => {
-                // handle error
-                console.log('--ERROR--',error);
-                // resolve({
-                //     name: 'Крапивин Игорь',
-                //     email: 'say@brnv.rw',
-                // })
-                reject(error);
-            })
-    });
+api.getMessageTemplates= async (token) => {
+    try {
+        const response = await apiData('/message/templates', token)
+        if (response.data) return response.data.results
+        else {}
+    } catch (error) {
+        if (error.response.status === 401) throw new Error("401 (Unauthorized)")
+        return error
+    }
 }
 
-api.findUser=(token)=>{
-    return new Promise((resolve, reject) => {
-        axios({
-            method: 'post',
-            url: _apiBase+'/auth/user',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
-        })
-            .then((response)=> {
+api.sendMessage = async (message,token) =>
+    await apiData('/ssp/msg', token,'post',JSON.stringify({message:message}))
+api.createTemplate = async (name, text, category, token) =>
+    await apiData('/message/template', token, 'post', JSON.stringify({name: name, text: text, category: category}))
+api.updateTemplate = async (id, name, text, category, token) =>
+    await apiData('/message/template/'+ id, token,'put',JSON.stringify({name:name, text:text, category: category}))
+api.deleteTemplate = async (id, token) =>
+    await apiData('/message/template/'+ id, token,'delete')
 
-                if (response.status===200) {
 
-                    resolve({
-                        name: response.data.data.user.cn,
-                        email: response.data.data.user.userPrincipalName,
-                        admin:response.data.data.user.admin || false,
-                    })
-                }
-                else {
-                    reject();
-                }
-            })
-            .catch( (error) => {
-                // handle error
-                console.log('--ERROR--',error);
-                reject(error);
-            })
-    });
+api.delResponseMessage= async (token, id) => {
+    await apiData('/message/responses/' +id, token,'delete')
 }
-
-api.getAdUser=async (setProgress)=> normalizeUsers(await getApiDataWithProgress('/domain', setProgress))
-
-api.getSoftware=async (setProgress)=> await getApiDataWithProgress('/soft', setProgress)
-
-api.getInternetGroup=async ()=>await getApiData('/inet')
-
-api.getOneUser=async (userPN)=>normalizeUser(await getApiData('/domain/'+userPN))
-api.addAlert= (alert)=> addApiData('/useralerts', alert)
-api.delAlert= (id)=> delApiData('/useralerts', {id:id})
-
-api.getUserAlerts=async ()=>await getApiData('/useralerts')
-api.getOneUserAlerts=async (userPN)=>formatAlerts(await getApiData('/useralerts/'+userPN))
-api.getOneUserCurrentAlerts=async (userPN)=>await getApiData('/useralerts/today/'+userPN)
-
-api.getZals = async ()=>await getApiData('/zals')
-
-api.getActiveZals = async ()=>await getApiData('/skype/activeconf')
-
-api.getConfCurrentUsers=async (confIf)=>await getApiData('/skype/conf/'+confIf)
+api.updateResponseMessage= async (token, message) => {
+     await apiData('/message/responses/' +message.id, token,'put',JSON.stringify(message))
+}
+api.refreshToken = async (token) => await apiData (
+    '/token/refresh',
+    '',
+    'post',
+    JSON.stringify({refresh_token:token}))
 
 
 
+let sse
+api.subscribeToMessages=(token,onData, onError)=>{
+                if (sse) sse.close();
+                sse = new EventSource('http://vm-say-work.brnv.rw:9000/v1/subscribe/' + token)
+                const getRealtimeData = data => {
+                    onData(data)
+                }
+                sse.onmessage = e => getRealtimeData(JSON.parse(e.data));
+                sse.onerror = () => {
+                    onError()
+                }
+}
+api.unsubscribeToMessages=()=>{
+    if (sse) sse.close();
+  //  console.log('-unsubscribeToMessages-',sse)
+}
 export default api
-//http://vm-say-work.brnv.rw:9003/skype?sip=say@brnv.rw
